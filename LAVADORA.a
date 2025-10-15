@@ -1,0 +1,66 @@
+;---------------------------------------------
+MAQ_ESTADOS:
+	MOV A, ESTADO
+	RL A
+	MOV DPTR, #LISTA_EST
+	JMP @A+DPTR
+LISTA_EST:
+	AJMP ESTADO_0 ; Nombre Estado 0
+	AJMP ESTADO_1 ; Nombre Estado 1
+	AJMP ESTADO_2 ; Nombre Estado 2
+
+	AJMP ESTADO_n ; Nombre Estado n
+;---------------------------------------------
+ESTADO_0:
+	ACALL MQ_EVEN_0
+	RET
+
+ESTADO_1:
+	ACALL MQ_EVEN_1
+	RET
+
+ESTADO_2:
+	ACALL MQ_EVEN_2
+	RET
+…
+ESTADO_n:
+	ACALL MQ_EVEN_n
+	RET
+;-----------------------------------
+MQ_EVEN_0:
+	MOV A, EVENTO
+	RL A
+	MOV DPTR, #LIST_EVEN_MQEV_0
+	JMP @A+DPTR
+LIST_EVEN_MQEV_0:
+	AJMP ME0_EV_0 ; Evento 0
+	AJMP ME0_EV_1 ; Descripción Maq. Event. 0. Evento 1
+	AJMP ME0_EV_k ; Descripción Maq. Event. 0. Evento k
+ME0_EV_0:
+	RET
+ME0_EV_1:
+	[ACCIÓN_i]
+	[ACCIÓN_ii]
+	
+	RET
+
+;-----------------------------------
+MQ_EVEN_1:
+	MOV A, EVENTO
+	RL A
+	MOV DPTR, #LIST_EVEN_MQEV_1
+	JMP @A+DPTR
+LIST_EVEN_MQEV_0:
+	AJMP ME1_EV_0 ; Evento 0
+	AJMP ME1_EV_1 ; Descripción Maq. Event. 0. Evento 1
+	AJMP ME1_EV_k ; Descripción Maq. Event. 0. Evento k
+ME1_EV_0:
+	RET
+ME1_EV_1:
+	[ACCIÓN_i]
+	[ACCIÓN_ii]
+	
+	RET
+
+;-----------------------------------
+MQ_EVEN_n:
