@@ -103,13 +103,12 @@ LIST_EVEN_MQEV_0:
 	AJMP ME0_EV_k ; Descripción Maq. Event. 0. Evento k
 ME0_EV_0:
 	RET
-ME0_EV_1:
-	[ACCIÓN_i]
-	[ACCIÓN_ii]
-	
+ME0_EV_1:	;ENCENDIO Y PUERTA CERRADA
+	RET
+ME0_EV_2:	;ENCENDIO Y PUERTA ABIERTA
 	RET
 
-;=====================================================================================================
+;===========================================ESTADO 1 - COMPROBANDO SP==========================================================
 
 MQ_EVEN_1:
 	MOV A, EVENTO
@@ -119,14 +118,144 @@ MQ_EVEN_1:
 LIST_EVEN_MQEV_0:
 	AJMP ME1_EV_0 ; Evento 0
 	AJMP ME1_EV_1 ; Descripción Maq. Event. 0. Evento 1
-	AJMP ME1_EV_k ; Descripción Maq. Event. 0. Evento k
+	AJMP ME1_EV_2 ; Descripción Maq. Event. 0. Evento k
+	AJMP ME1_EV_3
+	AJMP ME1_EV_4 ;
 ME1_EV_0:
 	RET
-ME1_EV_1:
-	[ACCIÓN_i]
-	[ACCIÓN_ii]
-	
+ME1_EV_1:	;PULSA ENCENDIDO DE NUEVO
 	RET
-;=====================================================================================================
+ME1_EV_2:	;HAY SOBREPESO
+	RET
+ME1_EV_3:	;PUERTA ABIERTA
+	RET
+ME1_EV_4:	;NO SOBREPESO Y ENCENDIDO
+	RET
+;==========================================ESTADO 2 - PUERTA ABIERTA===========================================================
 
-MQ_EVEN_n:
+MQ_EVEN_2:
+	MOV A, EVENTO
+	RL A
+	MOV DPTR, #LIST_EVEN_MQEV_2
+	JMP @A+DPTR
+LIST_EVEN_MQEV_2:
+	AJMP ME2_EV_0 ; Evento 0
+	AJMP ME2_EV_1 ; Descripción Maq. Event. 0. Evento 1
+ME1_EV_0:
+	RET
+ME1_EV_1:	;PUERTA CERRADA
+	RET
+
+;==========================================ESTADO 3 - LLENADO===========================================================
+
+MQ_EVEN_3:
+	MOV A, EVENTO
+	RL A
+	MOV DPTR, #LIST_EVEN_MQEV_3
+	JMP @A+DPTR
+LIST_EVEN_MQEV_3:
+	AJMP ME3_EV_0 ; Evento 0
+	AJMP ME3_EV_1 
+ME3_EV_0:
+	RET
+ME3_EV_1:	;CUBA LLENA
+	RET
+
+;==========================================ESTADO 4 - CALENTAMIENTO CUBA===========================================================
+
+MQ_EVEN_4:
+	MOV A, EVENTO
+	RL A
+	MOV DPTR, #LIST_EVEN_MQEV_4
+	JMP @A+DPTR
+LIST_EVEN_MQEV_4:
+	AJMP ME4_EV_0 ; Evento 0
+	AJMP ME4_EV_1
+	AJMP ME4_EV_2 
+ME4_EV_0:
+	RET
+ME4_EV_1:	; NO CALIENTE
+	RET
+ME4_EV_2:	; AGUA CALIENTE
+	RET
+
+;==========================================ESTADO 5 - LAVADO===========================================================
+
+MQ_EVEN_5:
+	MOV A, EVENTO
+	RL A
+	MOV DPTR, #LIST_EVEN_MQEV_5
+	JMP @A+DPTR
+LIST_EVEN_MQEV_5:
+	AJMP ME5_EV_0 ; Evento 0
+	AJMP ME5_EV_1
+	AJMP ME5_EV_2
+	AJMP ME5_EV_3 
+ME5_EV_0:
+	RET
+ME5_EV_1:	; PASA 1 MIN
+	RET
+ME5_EV_2:	; PASAN 15s
+	RET
+ME5_EV_3:	; PASAN 50 MIN
+	RET
+
+;==========================================ESTADO 6 - VACIAR AGUA===========================================================
+
+MQ_EVEN_6:
+	MOV A, EVENTO
+	RL A
+	MOV DPTR, #LIST_EVEN_MQEV_6
+	JMP @A+DPTR
+LIST_EVEN_MQEV_6:
+	AJMP ME6_EV_0 ; Evento 0
+	AJMP ME6_EV_1
+ME6_EV_0:
+	RET
+ME6_EV_1:	; CUBA VACIA
+	RET
+
+;==========================================ESTADO 7 - CENTRIFUGAR===========================================================
+
+MQ_EVEN_7:
+	MOV A, EVENTO
+	RL A
+	MOV DPTR, #LIST_EVEN_MQEV_7
+	JMP @A+DPTR
+LIST_EVEN_MQEV_7:
+	AJMP ME7_EV_0 ; Evento 0
+	AJMP ME7_EV_1
+ME7_EV_0:
+	RET
+ME7_EV_1:	; PASAN 10 MIN
+	RET
+
+;==========================================ESTADO 8 - FIN===========================================================
+
+MQ_EVEN_8:
+	MOV A, EVENTO
+	RL A
+	MOV DPTR, #LIST_EVEN_MQEV_8
+	JMP @A+DPTR
+LIST_EVEN_MQEV_8:
+	AJMP ME8_EV_0 ; Evento 0
+	AJMP ME8_EV_1
+ME8_EV_0:
+	RET
+ME8_EV_1:	; PUERTA ABIERTA
+	RET
+
+;==============================================INTERRUPCIONES=======================================================
+
+ORG 0x0003
+INTERRUPCION_EXT:
+	
+ORG 0x000B
+INTERRUPCION_TIMER:
+
+ORG 0X0053
+INTERRUPCION_ADC:
+
+
+;==============================================FIN======================================================
+END
