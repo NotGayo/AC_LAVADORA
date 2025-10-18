@@ -1,16 +1,49 @@
-;---------------------------------------------
+;====================================VARIABLES===========================================================
+	
+ESTADO EQU 0x20
+EVENTO EQU 0x21
+VALOR_DISPLAY EQU 0x22
+
+
+;======================================INCIO================================================
+
+ORG 0x0000
+	AJMP INICIO
+0RG 0X007b
+
+INICIO:
+	ACALL INICIALIZACIONES
+
+MAIN:					;LAZO PRINCIPAL
+	ACALL MAQ_ESTADOS
+	AJMP MAIN
+
 MAQ_ESTADOS:
 	MOV A, ESTADO
 	RL A
 	MOV DPTR, #LISTA_EST
 	JMP @A+DPTR
 LISTA_EST:
-	AJMP ESTADO_0 ; Nombre Estado 0
-	AJMP ESTADO_1 ; Nombre Estado 1
-	AJMP ESTADO_2 ; Nombre Estado 2
+	AJMP ESTADO_0 ; REPOSO
+	AJMP ESTADO_1 ; COMPROBACION SOBREPESO
+	AJMP ESTADO_2 ; PUERTA ABIERTA
+	AJMP ESTADO_3 ; LLENANDO
+	AJMP ESTADO_4 ; CALENTAR CUBA
+	AJMP ESTADO_5 ; LAVADO
+	AJMP ESTADO_6 ; VACIAR AGUA
+	AJMP ESTADO_7 ; CENTRIFUGAR
+	AJMP ESTADO_8 ; FIN
 
-	AJMP ESTADO_n ; Nombre Estado n
-;---------------------------------------------
+;================================INICIALIZACIONES====================================================================
+
+INICIALIZACIONES:
+
+	MOV ESTADO, #0
+	MOV EVENTO, #0
+	MOV VALOR_DISPLAY, #0
+	
+;=====================================================================================================
+
 ESTADO_0:
 	ACALL MQ_EVEN_0
 	RET
@@ -58,7 +91,7 @@ ESTADO_11:
 	RET
 
 
-;-----------------------------------
+;=====================================================================================================
 MQ_EVEN_0:
 	MOV A, EVENTO
 	RL A
@@ -76,7 +109,8 @@ ME0_EV_1:
 	
 	RET
 
-;-----------------------------------
+;=====================================================================================================
+
 MQ_EVEN_1:
 	MOV A, EVENTO
 	RL A
@@ -93,6 +127,6 @@ ME1_EV_1:
 	[ACCIÓN_ii]
 	
 	RET
+;=====================================================================================================
 
-;-----------------------------------
 MQ_EVEN_n:
