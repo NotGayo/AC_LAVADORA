@@ -3,13 +3,21 @@
 ESTADO EQU 0x20
 EVENTO EQU 0x21
 VALOR_DISPLAY EQU 0x22
+TICK_INT_0 EQU 0x23.0
+TICK_ADC_0 EQU 0x23.1
+TICK_ADC_1 EQU 0x23.2
+
 
 
 ;======================================INCIO================================================
 
 ORG 0x0000
 	AJMP INICIO
-0RG 0X007b
+ORG 0X0003
+	AJMP INT0_ISR
+ORG 0X0053
+	AJMP ADC_ISR
+ORG 0X007b
 
 INICIO:
 	ACALL INICIALIZACIONES
@@ -41,15 +49,18 @@ INICIALIZACIONES:
 	MOV ESTADO, #0
 	MOV EVENTO, #0
 	MOV VALOR_DISPLAY, #0
+	SETB IE.0	;ACTIVAMOS LA INT0	
+	SETB TICK_INT_0 ;TICK A NIVEL BAJO POR ELLO SE INICIA A 1
 	
+	RET	
 ;=====================================================================================================
 
 ESTADO_0:
-	ACALL MQ_EVEN_0
+	ACALL MQ_EVEN_0 	;REPOSO
 	RET
 
 ESTADO_1:
-	ACALL MQ_EVEN_1
+	ACALL MQ_EVEN_1		;COMPROBANDO SP
 	RET
 
 ESTADO_2:
@@ -91,7 +102,7 @@ ESTADO_11:
 	RET
 
 
-;=====================================================================================================
+;===============================================ESTADO 0 - REPOSO======================================================
 MQ_EVEN_0:
 	MOV A, EVENTO
 	RL A
@@ -103,9 +114,11 @@ LIST_EVEN_MQEV_0:
 	AJMP ME0_EV_k ; Descripción Maq. Event. 0. Evento k
 ME0_EV_0:
 	RET
-ME0_EV_1:	;ENCENDIO Y PUERTA CERRADA
+ME0_EV_1:
+	;---	;ENCENDIO Y PUERTA CERRADA
 	RET
-ME0_EV_2:	;ENCENDIO Y PUERTA ABIERTA
+ME0_EV_2:
+	;---	;ENCENDIO Y PUERTA ABIERTA
 	RET
 
 ;===========================================ESTADO 1 - COMPROBANDO SP==========================================================
@@ -245,17 +258,56 @@ ME8_EV_0:
 ME8_EV_1:	; PUERTA ABIERTA
 	RET
 
+;==============================================GENERADOR DE EVENTOS=======================================================
+
+GEN_EVEN:		;COMPROBAREMOS TODAS LAS CONDICIONES EN UNA SOLA SUBRUTINA
+	
+	JB TICK_INT_0, COMPROBAR_PUERTA_ABIERTA
+		
+	JB TICK_INT_0, COMPROBAR_PUERTA_CERRADA 
+	
+	;JB TICK_ADC_0, COMPROBAR_SOBREPESO
+	
+	MOV ESTADO,#0x00
+	RET
+	
+
+
+GEN_EVE1:
+	MOV EVENTO,#0x01
+	CLR TICK_INT_0
+	RET
+GEN_EVE2:
+	MOV EVENTO, #0x02
+	CLR TICK_INT_0
+	RET
+
+COMPROBAR_PUERTA_ABIERTA:
+	JB P1.1, GEN_EVE1
+	RET
+COMPROBAR_PUERTA_CERRADA:
+	JNB P1.1, GEN_EVE2
+	RET
+COMPROBAR_SOBREPESO:
+	;JUMPSIMAYORQUE VALOR_ADC > 4,5V
+	RET
 ;==============================================INTERRUPCIONES=======================================================
 
-ORG 0x0003
-INTERRUPCION_EXT:
-	
-ORG 0x000B
-INTERRUPCION_TIMER:
+INT0_ISR:
+	PUSH PSW
+	PUSH ACC
+	CLR TICK_INT0
+	POP PSW
+	POP ACC
+	RETI
 
-ORG 0X0053
-INTERRUPCION_ADC:
-
-
+ADC_ISR:
+	PUSH PSW
+	PUSH ACC
+	SETB TICK_ADC_0
+	ANL ADCON, #0XF0
+	POP PSW
+	POP ACC
+	RETI
 ;==============================================FIN======================================================
 END
