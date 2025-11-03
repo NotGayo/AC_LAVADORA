@@ -3,11 +3,23 @@
 ESTADO EQU 0x20
 EVENTO EQU 0x21
 VALOR_DISPLAY EQU 0x22
+;------------------TICKS--------------
 TICK_INT_0 EQU 0x23.0
 TICK_ADC_0 EQU 0x23.1
 TICK_ADC_1 EQU 0x23.2
-
-
+TICK_TIMER_0 EQU 0x23.3
+;-----------SENSORES Y ACTIVACIONES-----------------
+MOTOR_DESAGUE EQU P1.0
+PUERTA_ABIERTA EQU P1.1
+SENSOR_LLENADO EQU P1.2
+SENSOR_VACIADO EQU P1.3
+BIT1_TEMP EQU P3.1
+BIT0_TEMP EQU P3.0
+VALV_ENTRADA_AGUA EQU P3.3
+CALENTADOR_AGUA EQU P3.6
+SENTIDO_GIRO_MOTOR EQU P2.7
+;-------------REGISTROS IMPORTANTES-------------------------------
+ADCON EQU 0xC5
 
 ;======================================INCIO================================================
 
@@ -55,11 +67,15 @@ INICIALIZACIONES:
 	RET	
 ;=====================================================================================================
 
+;LLAMAMOS AL GENERADOR DE EVENTOS PARA QUE ASI NOS DIGA A CUAL DEBEMOS IR EN EL ESTADO DEL SISTEMA QUE NOS ENCONTRAMOS
+
 ESTADO_0:
+	ACALL GEN_EV_0
 	ACALL MQ_EVEN_0 	;REPOSO
 	RET
 
 ESTADO_1:
+	ACALL GEN_EV_1
 	ACALL MQ_EVEN_1		;COMPROBANDO SP
 	RET
 
@@ -89,58 +105,58 @@ ESTADO_8:
 	ACALL MQ_EVEN_8
 	RET
 
-ESTADO_9:
-	ACALL MQ_EVEN_9
-	RET
-
-ESTADO_10:
-	ACALL MQ_EVEN_10
-	RET
-
-ESTADO_11:
-	ACALL MQ_EVEN_11
-	RET
-
 
 ;===============================================ESTADO 0 - REPOSO======================================================
 MQ_EVEN_0:
+	;PONEMOS EL IDLE
 	MOV A, EVENTO
 	RL A
 	MOV DPTR, #LIST_EVEN_MQEV_0
 	JMP @A+DPTR
 LIST_EVEN_MQEV_0:
 	AJMP ME0_EV_0 ; Evento 0
-	AJMP ME0_EV_1 ; Descripción Maq. Event. 0. Evento 1
-	AJMP ME0_EV_k ; Descripción Maq. Event. 0. Evento k
+	AJMP ME0_EV_1 ; Evento 1
+	AJMP ME0_EV_2 ; Evento 2
 ME0_EV_0:
 	RET
 ME0_EV_1:
-	;---	;ENCENDIO Y PUERTA CERRADA
+	;---	;ENCENDIO Y PUERTA ABIERTA
+	CLR IE.0
+	MOV ESTADO, #02H
 	RET
 ME0_EV_2:
-	;---	;ENCENDIO Y PUERTA ABIERTA
+	;---	;ENCENDIO Y PUERTA CERRADA
+	CLR IE.0
+	SETB IE.7
+	SETB IE.6
+	ACALL ACTIVAR_ADC_PESO
+	CLR P3.2
+	MOV ESTADO, #01H
 	RET
 
 ;===========================================ESTADO 1 - COMPROBANDO SP==========================================================
-
 MQ_EVEN_1:
 	MOV A, EVENTO
 	RL A
 	MOV DPTR, #LIST_EVEN_MQEV_1
 	JMP @A+DPTR
-LIST_EVEN_MQEV_0:
+LIST_EVEN_MQEV_1:
 	AJMP ME1_EV_0 ; Evento 0
-	AJMP ME1_EV_1 ; Descripción Maq. Event. 0. Evento 1
-	AJMP ME1_EV_2 ; Descripción Maq. Event. 0. Evento k
-	AJMP ME1_EV_3
-	AJMP ME1_EV_4 ;
+	AJMP ME1_EV_1 ; Se pulsa p3.2 apagar ir a estado 0
+	AJMP ME1_EV_2 ; Se abre la puerta
+	AJMP ME1_EV_3 ; salta adc y sobre peso
+	AJMP ME1_EV_4 ; salta adc, peso ok y p1.4
 ME1_EV_0:
 	RET
 ME1_EV_1:	;PULSA ENCENDIDO DE NUEVO
+	MOV ESTADO, #0x00
 	RET
-ME1_EV_2:	;HAY SOBREPESO
+ME1_EV_2:	;PUERTA ABIERTA
+	MOV DISPLAY_0, #77H
+	MOV DISPLAY_1, #73H
+	AJMP CARGAR_DISPLAYS
 	RET
-ME1_EV_3:	;PUERTA ABIERTA
+ME1_EV_3:	;HAY SOBREPESO
 	RET
 ME1_EV_4:	;NO SOBREPESO Y ENCENDIDO
 	RET
@@ -154,9 +170,9 @@ MQ_EVEN_2:
 LIST_EVEN_MQEV_2:
 	AJMP ME2_EV_0 ; Evento 0
 	AJMP ME2_EV_1 ; Descripción Maq. Event. 0. Evento 1
-ME1_EV_0:
+ME2_EV_0:
 	RET
-ME1_EV_1:	;PUERTA CERRADA
+ME2_EV_1:	;PUERTA CERRADA
 	RET
 
 ;==========================================ESTADO 3 - LLENADO===========================================================
@@ -258,45 +274,120 @@ ME8_EV_0:
 ME8_EV_1:	; PUERTA ABIERTA
 	RET
 
-;==============================================GENERADOR DE EVENTOS=======================================================
+;==============================================GENERADORES DE EVENTOS=======================================================
 
-GEN_EVEN:		;COMPROBAREMOS TODAS LAS CONDICIONES EN UNA SOLA SUBRUTINA
-	
-	JB TICK_INT_0, COMPROBAR_PUERTA_ABIERTA
-		
-	JB TICK_INT_0, COMPROBAR_PUERTA_CERRADA 
-	
-	;JB TICK_ADC_0, COMPROBAR_SOBREPESO
-	
-	MOV ESTADO,#0x00
-	RET
-	
-
-
-GEN_EVE1:
-	MOV EVENTO,#0x01
-	CLR TICK_INT_0
-	RET
-GEN_EVE2:
-	MOV EVENTO, #0x02
-	CLR TICK_INT_0
+GEN_EV_0:
+	;CONDICIONES ESTADO 0
+	JB P3.2, COMPROBAR_PUERTA	;SI NO ESTA EL BOTON NI NOS MOLESTAMOS EN VER EL RESTO DE CONDICIONES 
+	MOV EVENTO, #00H		;ESTAMOS SEGURO EN ESTADO 0 SI NO ESTA P3.2
 	RET
 
-COMPROBAR_PUERTA_ABIERTA:
-	JB P1.1, GEN_EVE1
+COMPROBAR_PUERTA:
+	JB PUERTA_ABIERTA, GEN_EV_1_ES_0
+	AJMP GEN_EV_2_ES_0
+
+GEN_EV_1_ES_0:
+	MOV EVENTO, #01H		;EN EL CASO DE QUE SI ESTE LA PUERTA ABIERTA EVENTO 1 ESTADO 0
 	RET
-COMPROBAR_PUERTA_CERRADA:
-	JNB P1.1, GEN_EVE2
+
+GEN_EV_2_ES_0:
+	MOV EVENTO, #02H		;EN EL CASO DE QUE SI ESTE LA PUERTA ABIERTA EVENTO 2 ESTADO 0
 	RET
-COMPROBAR_SOBREPESO:
-	;JUMPSIMAYORQUE VALOR_ADC > 4,5V
+
+
+
+;------------------------------------------------------------------------------------------------------------------
+
+GEN_EV_1:
+	;CONDICIONES ESTADO 1
+	JB P3.2, GEN_EV_1_ES_1
+	JB PUERTA_ABIERTA, GEN_EV_2_ES_1
+	;ADC
 	RET
+
+GEN_EV_1_ES_1:
+	MOV EVENTO, #01H
+	RET
+GEN_EV_2_ES_1:
+	MOV EVENTO, #02H
+	RET
+GEN_EV_3_ES_1:
+	CLR TICK_ADC_0
+	MOV EVENTO, #03H
+	RET
+GEN_EV_4_ES_1:
+	CLR TICK_ADC_0
+	MOV EVENTO, #04H
+	RET
+;------------------------------------------------------------------------------------------------------------------
+
+GEN_EV_2:
+	;CONDICIONES ESTADO 0
+	
+	RET
+
+
+;------------------------------------------------------------------------------------------------------------------
+
+GEN_EV_3:
+	;CONDICIONES ESTADO 0
+	
+	RET
+
+
+;------------------------------------------------------------------------------------------------------------------
+
+GEN_EV_4:
+	;CONDICIONES ESTADO 0
+	
+	RET
+
+
+;------------------------------------------------------------------------------------------------------------------
+
+GEN_EV_5:
+	;CONDICIONES ESTADO 0
+	
+	RET
+
+
+;------------------------------------------------------------------------------------------------------------------
+
+GEN_EV_6:
+	;CONDICIONES ESTADO 0
+	
+	RET
+
+
+;------------------------------------------------------------------------------------------------------------------
+
+GEN_EV_7:
+	;CONDICIONES ESTADO 0
+	
+	RET
+
+
+;------------------------------------------------------------------------------------------------------------------
+
+GEN_EV_8:
+	;CONDICIONES ESTADO 0
+	
+	RET
+
+
+;------------------------------------------------------------------------------------------------------------------
+;================================================ACCIONES=======================================================
+
+ACTIVAR_ADC_PESO:
+	ANL ADCON,#0xE8
+	ORL ADCON,#0x08
+
 ;==============================================INTERRUPCIONES=======================================================
 
 INT0_ISR:
 	PUSH PSW
 	PUSH ACC
-	CLR TICK_INT0
+	CLR TICK_INT_0
 	POP PSW
 	POP ACC
 	RETI
