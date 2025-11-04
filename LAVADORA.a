@@ -2,7 +2,8 @@
 	
 ESTADO EQU 0x20
 EVENTO EQU 0x21
-VALOR_DISPLAY EQU 0x22
+DISPLAY_1 EQU 0X25
+DISPLAY_0 EQU 0x26
 ;------------------TICKS--------------
 TICK_INT_0 EQU 0x23.0
 TICK_ADC_0 EQU 0x23.1
@@ -21,7 +22,7 @@ CALENTADOR_AGUA EQU P3.6
 SENTIDO_GIRO_MOTOR EQU P2.7
 ;-------------REGISTROS IMPORTANTES-------------------------------
 ADCON EQU 0xC5
-
+ADCH EQU 0xC6
 ;======================================INCIO================================================
 
 ORG 0x0000
@@ -61,10 +62,12 @@ INICIALIZACIONES:
 
 	MOV ESTADO, #0
 	MOV EVENTO, #0
-	MOV VALOR_DISPLAY, #0
+	MOV DISPLAY_1, #0x00
+	MOV DISPLAY_0, #0x00
 	SETB IE.0	;ACTIVAMOS LA INT0	
 	SETB TICK_INT_0 ;TICK A NIVEL BAJO POR ELLO SE INICIA A 1
-	
+	CLR TICK_ADC_0 ;TICK A NIVEL BAJO INICIAMOS A 1
+	CLR PUERTA_ABIERTA	;EMPEZAMOS CON LA PUERTA CERRADA
 	RET	
 ;=====================================================================================================
 
@@ -81,28 +84,36 @@ ESTADO_1:
 	RET
 
 ESTADO_2:
+	ACALL GEN_EV_2
 	ACALL MQ_EVEN_2
 	RET
 
 ESTADO_3:
+	ACALL GEN_EV_3
 	ACALL MQ_EVEN_3
 	RET
 ESTADO_4:
+	ACALL GEN_EV_4
 	ACALL MQ_EVEN_4
 	RET
 
 ESTADO_5:
+	ACALL GEN_EV_5
 	ACALL MQ_EVEN_5
 	RET
 
 ESTADO_6:
+	ACALL GEN_EV_6
 	ACALL MQ_EVEN_6
 	RET
 
 ESTADO_7:
+	ACALL GEN_EV_7
 	ACALL MQ_EVEN_7
 	RET
+
 ESTADO_8:
+	ACALL GEN_EV_8
 	ACALL MQ_EVEN_8
 	RET
 
@@ -285,6 +296,8 @@ ME8_EV_1:	; PUERTA ABIERTA
 
 ;==============================================GENERADORES DE EVENTOS=======================================================
 
+;-------------------------------------------------------0-----------------------------------------------------------
+
 GEN_EV_0:
 	;CONDICIONES ESTADO 0
 	JB P3.2, COMPROBAR_PUERTA	;SI NO ESTA EL BOTON NI NOS MOLESTAMOS EN VER EL RESTO DE CONDICIONES 
@@ -305,7 +318,7 @@ GEN_EV_2_ES_0:
 
 
 
-;------------------------------------------------------------------------------------------------------------------
+;-------------------------------------------------------1------------------------------------------------------------
 
 GEN_EV_1:
 	;CONDICIONES ESTADO 1
@@ -313,6 +326,7 @@ GEN_EV_1:
 	JB PUERTA_ABIERTA, GEN_EV_2_ES_1
 	;ADC
 	JB TICK_ADC_0, HAY_SP
+	MOV EVENTO,#00H
 	RET
 
 GEN_EV_1_ES_1:
@@ -409,20 +423,22 @@ CARGAR_DISPLAYS:
 ;==============================================INTERRUPCIONES=======================================================
 
 INT0_ISR:
-	PUSH PSW
 	PUSH ACC
+	PUSH PSW
 	CLR TICK_INT_0
 	POP PSW
 	POP ACC
 	RETI
 
 ADC_ISR:
-	PUSH PSW
 	PUSH ACC
+	PUSH PSW
 	SETB TICK_ADC_0
 	ANL ADCON, #0XF0
 	POP PSW
 	POP ACC
 	RETI
+
 ;==============================================FIN======================================================
+
 END
