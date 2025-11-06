@@ -74,6 +74,26 @@ INICIALIZACIONES:
 	CLR PUERTA_ABIERTA	;EMPEZAMOS CON LA PUERTA CERRADA
 	CLR COPIA_BP
 	CLR COPIA_SG
+
+	CLR P0.0
+	CLR P0.1
+	CLR P0.2
+	CLR P0.3
+	CLR P0.4
+	CLR P0.5
+	CLR P0.6
+	CLR P0.7
+
+	CLR P2.0
+	CLR P2.1
+	CLR P2.2
+	CLR P2.3
+	CLR P2.4
+	CLR P2.5
+	CLR P2.6
+	CLR P2.7
+
+
 	RET	
 ;=====================================================================================================
 
@@ -140,6 +160,10 @@ ME0_EV_0:
 ME0_EV_1:
 	;---	;ENCENDIO Y PUERTA ABIERTA
 	CLR IE.0
+	MOV DISPLAY_0, #77H	;A
+	MOV DISPLAY_1, #73H	;P
+	ACALL CARGAR_DISPLAY_0
+	ACALL CARGAR_DISPLAY_1	
 	MOV ESTADO, #02H
 	RET
 ME0_EV_2:
@@ -184,11 +208,12 @@ ME1_EV_3:	;HAY SOBREPESO
 	RET
 ME1_EV_4:	;NO SOBREPESO Y ENCENDIDO
 	MOV DISPLAY_0, #3FH	;t
+	SETB BLOQUEO_PUERTA
+	SETB COPIA_BP
 	ACALL CARGAR_TEMP_DSP_1 ;Esta subrutina carga en DISPLAY_1 el valor de la temperatura actual
 	ACALL CARGAR_DISPLAY_0
 	ACALL CARGAR_DISPLAY_1
 	SETB VALV_ENTRADA_AGUA
-	
 	MOV ESTADO, #03H
 	RET
 ;==========================================ESTADO 2 - PUERTA ABIERTA===========================================================
@@ -382,10 +407,14 @@ GEN_EV_1_ES_2:
 ;------------------------------------------------------------------------------------------------------------------
 
 GEN_EV_3:
-	;CONDICIONES ESTADO 0
-	
+	;CONDICIONES ESTADO 3
+	JB SENSOR_LLENADO, GEN_EV_1_ES_3
+	MOV EVENTO, #00H
 	RET
 
+GEN_EV_1_ES_3:
+	MOV EVENTO, #01H
+	RET
 
 ;------------------------------------------------------------------------------------------------------------------
 
@@ -436,7 +465,7 @@ ACTIVAR_ADC_PESO:
 	RET
 
 CARGAR_DISPLAY_1:
-	MOV P0, DISPLAY_1
+	MOV P0, DISPLAY_1		;hacemos el mov completo y luego corregimos en base al aux de bloqpuerta
 	JB COPIA_BP, SET_PB_1
 	AJMP SET_PB_0
 	RET
@@ -450,7 +479,7 @@ CARGAR_DISPLAY_1:
 CARGAR_DISPLAY_0:
 	MOV P2, DISPLAY_0
 	JB COPIA_SG, SET_SG_1
-	AJMP SET_SG_0
+	AJMP SET_SG_0			;hacemos el mov completo y luego corregimos en base al aux de sentidogiro
 	RET
 	SET_SG_1:
 		SETB P2.7
