@@ -9,6 +9,7 @@ TICK_INT_0 EQU 0x23.0
 TICK_ADC_0 EQU 0x23.1
 TICK_ADC_1 EQU 0x23.2
 TICK_TIMER_0 EQU 0x23.3
+TICK_1S EQU 0X27.0
 ;------------------AUX_COPIAS--------------
 COPIA_BP EQU 0x23.4
 COPIA_SG EQU 0x23.5
@@ -243,11 +244,17 @@ MQ_EVEN_3:
 	MOV DPTR, #LIST_EVEN_MQEV_3
 	JMP @A+DPTR
 LIST_EVEN_MQEV_3:
-	AJMP ME3_EV_0 ; Evento 0
+	AJMP ME3_EV_0 		; Evento 0
 	AJMP ME3_EV_1 
 ME3_EV_0:
 	RET
-ME3_EV_1:	;CUBA LLENA
+ME3_EV_1:			;CUBA LLENA
+	MOV ESTADO, #04H
+	SETB CALENTADOR_AGUA
+	ACALL ACTIVAR_ADC_TEMP
+	ACALL ACTIVAR_TIMER_0
+	CLR TICK_1S
+	CLR VALV_ENTRADA_AGUA	
 	RET
 
 ;==========================================ESTADO 4 - CALENTAMIENTO CUBA===========================================================
@@ -391,7 +398,7 @@ HAY_SP:
 	JB BOTON_INICIO, GEN_EV_4_ES_1	;SI NO SI ESTA INICIO PULSADO PASAMOS AL EVENTO 4
 	RET
 	
-;------------------------------------------------------------------------------------------------------------------
+;------------------------------------------------------2------------------------------------------------------------
 
 GEN_EV_2:
 	;CONDICIONES ESTADO 0
@@ -404,7 +411,7 @@ GEN_EV_1_ES_2:
 	RET
 
 
-;------------------------------------------------------------------------------------------------------------------
+;--------------------------------------------------------3----------------------------------------------------------
 
 GEN_EV_3:
 	;CONDICIONES ESTADO 3
@@ -416,14 +423,30 @@ GEN_EV_1_ES_3:
 	MOV EVENTO, #01H
 	RET
 
-;------------------------------------------------------------------------------------------------------------------
+;----------------------------------------------------------4--------------------------------------------------------
 
 GEN_EV_4:
-	;CONDICIONES ESTADO 0
-	
+	;CONDICIONES ESTADO 44
+	JB TICK_1S, COMPROBAR_TEMP
+	MOV EVENTO, #00H
 	RET
 
+COMPROBAR_TEMP:
+	MOV A, ADCH
+	SUBB A, #00H 		; SUSTITUIR EL VALOR DE 00H POR TEMP MINA ALCANZAR
+	JC GEN_EV_1_ES_4
+	AJMP GEN_EV_2_ES_4
+	RET
 
+GEN_EV_1_ES_4:			
+	CLR TICK_1S
+	MOV EVENTO, #01H
+	RET
+
+GEN_EV_2_ES_4:
+	CLR TICK_1S
+	MOV EVENTO, #01H
+	RET
 ;------------------------------------------------------------------------------------------------------------------
 
 GEN_EV_5:
@@ -459,9 +482,17 @@ GEN_EV_8:
 ;------------------------------------------------------------------------------------------------------------------
 ;================================================ACCIONES=======================================================
 
-ACTIVAR_ADC_PESO:
+ACTIVAR_ADC_PESO:			;SELECCIONAMOS EL CANAL 0 PARA PESO
 	ANL ADCON,#0xE8
 	ORL ADCON,#0x08
+	RET
+
+ACTIVAR_ADC_TEMP:			;SELECCIONAMOS EL CANAL 1 PARA TEMP
+	ANL ADCON, #0xE6
+	ORL ADCON, #0x09
+	RET
+
+ACTIVAR_TIMER_0:
 	RET
 
 CARGAR_DISPLAY_1:
