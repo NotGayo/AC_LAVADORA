@@ -8,6 +8,8 @@ DISPLAY_0 EQU 0x26
 ;------------------CUENTAS Y VALORES--------------
 
 TIEMPO_RESTANTE_MINS EQU 0x22
+DECENAS EQU 0x28
+UNIDADES EQU 0x29
 
 ;------------------TICKS--------------
 
@@ -619,9 +621,113 @@ CARGAR_TEMP_DSP_1:
 		MOV DISPLAY_1, #0x4F
 		RET
 
-MAPEAR_TIEMPO_D1_D0:
+MAPEAR_TIEMPO_D1_D0:			;guardamos los valores de t restante por decenas y unidades en dos dir.
+	MOV A,TIEMPO_RESTANTE_MINS
+	MOV B, #0AH
+	DIV AB
+	MOV DECENAS, A
+	MOV UNIDADES, B
 	
+	ACALL MAP_DEC_D1
+	ACALL MAP_UNI_D0
+
 	RET
+
+	MAP_DEC_D1:
+		MOV A, DECENAS
+		RL A
+		MOV DPTR, #LISTA_DECENAS
+		JMP @A+DPTR
+	LISTA_DECENAS:
+		AJMP CD0
+		AJMP CD1
+		AJMP CD2
+		AJMP CD3
+		AJMP CD4
+		AJMP CD5
+		AJMP CD6
+		AJMP CD7
+		AJMP CD8
+		AJMP CD9
+	
+	CD0:
+		MOV DISPLAY_1, #0x3F
+		RET
+	CD1:
+		MOV DISPLAY_1, #0x06
+		RET
+	CD2:
+		MOV DISPLAY_1, #0x5B
+		RET
+	CD3:
+		MOV DISPLAY_1, #0x4F
+		RET
+	CD4:
+		MOV DISPLAY_1, #0x66
+		RET
+	CD5:
+		MOV DISPLAY_1, #0x6D
+		RET
+	CD6:
+		MOV DISPLAY_1, #0x7D
+		RET
+	CD7:
+		MOV DISPLAY_1, #0x07
+		RET
+	CD8:
+		MOV DISPLAY_1, #0x7F
+		RET
+	CD9:
+		MOV DISPLAY_1, #0x6F
+		RET
+
+	MAP_UNI_D0:
+		MOV A, UNIDADES
+		RL A
+		MOV DPTR, #LISTA_UNIDADES
+		JMP @A+DPTR
+	LISTA_UNIDADES:
+		AJMP CU0
+		AJMP CU1
+		AJMP CU2
+		AJMP CU3
+		AJMP CU4
+		AJMP CU5
+		AJMP CU6
+		AJMP CU7
+		AJMP CU8
+		AJMP CU9
+	
+	CU0:
+		MOV DISPLAY_0, #0x3F
+		RET
+	CU1:
+		MOV DISPLAY_0, #0x06
+		RET
+	CU2:
+		MOV DISPLAY_0, #0x5B
+		RET
+	CU3:
+		MOV DISPLAY_0, #0x4F
+		RET
+	CU4:
+		MOV DISPLAY_0, #0x66
+		RET
+	CU5:
+		MOV DISPLAY_0, #0x6D
+		RET
+	CU6:
+		MOV DISPLAY_0, #0x7D
+		RET
+	CU7:
+		MOV DISPLAY_0, #0x07
+		RET
+	CU8:
+		MOV DISPLAY_0, #0x7F
+		RET
+	CU9:
+		MOV DISPLAY_0, #0x6F
+		RET		
 ;==============================================INTERRUPCIONES=======================================================
 
 INT0_ISR:
