@@ -4,7 +4,13 @@ ESTADO EQU 0x20
 EVENTO EQU 0x21
 DISPLAY_1 EQU 0X25
 DISPLAY_0 EQU 0x26
+
+;------------------CUENTAS Y VALORES--------------
+
+TIEMPO_RESTANTE_MINS EQU 0x22
+
 ;------------------TICKS--------------
+
 TICK_INT_0 EQU 0x23.0
 TICK_ADC_0 EQU 0x23.1
 TICK_ADC_1 EQU 0x23.2
@@ -14,10 +20,14 @@ TICK_15S EQU 0x27.1
 TICK_1MIN EQU 0x27.2
 TICK_50MIN EQU 0X27.3
 TICK_10MIN EQU 0X27.4 
+
 ;------------------AUX_COPIAS--------------
+
 COPIA_BP EQU 0x23.4
 COPIA_SG EQU 0x23.5
+
 ;-----------SENSORES Y ACTIVACIONES-----------------
+
 BLOQUEO_PUERTA EQU P0.7
 MOTOR_DESAGUE EQU P1.0
 PUERTA_ABIERTA EQU P1.1
@@ -29,9 +39,12 @@ BIT0_TEMP EQU P3.0
 VALV_ENTRADA_AGUA EQU P3.3
 CALENTADOR_AGUA EQU P3.6
 SENTIDO_GIRO_MOTOR EQU P2.7
+
 ;-------------REGISTROS IMPORTANTES-------------------------------
+
 ADCON EQU 0xC5
 ADCH EQU 0xC6
+
 ;======================================INCIO================================================
 
 ORG 0x0000
@@ -73,6 +86,8 @@ INICIALIZACIONES:
 	MOV EVENTO, #0
 	MOV DISPLAY_1, #0x05
 	MOV DISPLAY_0, #0x00
+	MOV TIEMPO_RESTANTE_MINS, #0x60	;INICIAMOS LOS MINUTOS RESTANTES DE LAVADO A 60 IREMOS RESTANDO DE UNO EN UNO
+
 	SETB IE.0	;ACTIVAMOS LA INT0	
 	CLR TICK_INT_0 ;TICK A NIVEL ALTO POR ELLO SE INICIA A 0
 	CLR TICK_ADC_0 ;TICK A NIVEL ALTO INICIAMOS A 0
@@ -317,11 +332,13 @@ LIST_EVEN_MQEV_5:
 	AJMP ME5_EV_3 
 ME5_EV_0:
 	RET
-ME5_EV_1:	; PASA 1 MIN
+ME5_EV_1:	; PASA 15S
 	RET
-ME5_EV_2:	; PASAN 15s
+ME5_EV_2:	; PASAN 1 MIN
 	RET
 ME5_EV_3:	; PASAN 50 MIN
+	MOV ESTADO, #06H
+	SETB MOTOR_DESAGUE
 	RET
 
 ;==========================================ESTADO 6 - VACIAR AGUA===========================================================
@@ -479,18 +496,37 @@ GEN_EV_2_ES_4:
 
 GEN_EV_5:
 	;CONDICIONES ESTADO 0
-	
+	JB TICK_50MIN, GEN_EV_3_ES_5
+	JB TICK_1MIN, GEN_EV_2_ES_5
+	JB TICK_15S, GEN_EV_1_ES_5
 	RET
 
+GEN_EV_1_ES_5:	;15 SEG
+	CLR TICK_15S
+	MOV EVENTO,#01H
+	RET
+
+GEN_EV_2_ES_5:	;1MIN
+	CLR TICK_1MIN
+	MOV EVENTO,#02H
+	RET
+
+GEN_EV_3_ES_5:	;50MIN
+	CLR TICK_50MIN
+	MOV EVENTO,#03H
+	RET
 
 ;------------------------------------------------------------------------------------------------------------------
 
 GEN_EV_6:
 	;CONDICIONES ESTADO 0
-	
+	JB SENSOR_VACIADO, GEN_EV_1_ES_6
+	MOV EVENTO, #00H
 	RET
 
-
+GEN_EV_1_ES_6:
+	MOV EVENTO, #01H
+	RET
 ;------------------------------------------------------------------------------------------------------------------
 
 GEN_EV_7:
@@ -518,6 +554,9 @@ ACTIVAR_ADC_PESO:			;SELECCIONAMOS EL CANAL 0 PARA PESO
 ACTIVAR_ADC_TEMP:			;SELECCIONAMOS EL CANAL 1 PARA TEMP
 	ANL ADCON, #0xE6
 	ORL ADCON, #0x09
+	RET
+APAGAR_ADC:
+	ANL IE, #0xBF
 	RET
 
 ACTIVAR_TIMER_0_1S:
@@ -578,7 +617,11 @@ CARGAR_TEMP_DSP_1:
 		RET
 	PINTAR_D1_T3:
 		MOV DISPLAY_1, #0x4F
-		RET	
+		RET
+
+MAPEAR_TIEMPO_D1_D0:
+	
+	RET
 ;==============================================INTERRUPCIONES=======================================================
 
 INT0_ISR:
