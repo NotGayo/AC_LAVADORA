@@ -251,10 +251,10 @@ ME1_EV_3:	;HAY SOBREPESO
 	ACALL CARGAR_DISPLAY_1
 	RET
 ME1_EV_4:	;NO SOBREPESO Y ENCENDIDO
-	MOV DISPLAY_0, #3FH	;t
+	MOV DISPLAY_1, #3FH	;t
 	SETB BLOQUEO_PUERTA
 	SETB COPIA_BP
-	ACALL CARGAR_TEMP_DSP_1 ;Esta subrutina carga en DISPLAY_1 el valor de la temperatura actual
+	ACALL CARGAR_TEMP_DSP_0 ;Esta subrutina carga en DISPLAY_1 el valor de la temperatura actual
 	ACALL CARGAR_DISPLAY_0
 	ACALL CARGAR_DISPLAY_1
 	SETB VALV_ENTRADA_AGUA
@@ -274,7 +274,7 @@ ME2_EV_0:
 	RET
 ME2_EV_1:	;PUERTA CERRADA
 	MOV ESTADO, #01H
-	ACALL CARGAR_TEMP_DSP_1 ;Esta subrutina carga en DISPLAY_1 el valor de la temperatura actual
+	ACALL CARGAR_TEMP_DSP_0 ;Esta subrutina carga en DISPLAY_1 el valor de la temperatura actual
 	ACALL CARGAR_DISPLAY_0
 	ACALL CARGAR_DISPLAY_1
 	RET
@@ -389,6 +389,14 @@ LIST_EVEN_MQEV_7:
 ME7_EV_0:
 	RET
 ME7_EV_1:	; PASAN 10 MIN
+	MOV ESTADO, #08H
+	ACALL APAGAR_PWM0
+	CLR BLOQUEO_PUERTA
+	CLR COPIA_BP
+	MOV DISPLAY_1, 0x38	;L
+	MOV DISPLAY_0, 0x71	;F
+	ACALL CARGAR_DISPLAY_0
+	ACALL CARGAR_DISPLAY_1 
 	RET
 
 ME7_EV_2:	; PASA 1 MIN
@@ -409,7 +417,12 @@ LIST_EVEN_MQEV_8:
 	AJMP ME8_EV_1
 ME8_EV_0:
 	RET
-ME8_EV_1:	; PUERTA ABIERTA
+ME8_EV_1:			; PUERTA ABIERTA
+	MOV DISPLAY_0, #77H	; A
+	MOV DISPLAY_1, #73H	; P
+	MOV ESTADO, #02H
+	ACALL CARGAR_DISPLAY_0
+	ACALL CARGAR_DISPLAY_1	
 	RET
 
 ;==============================================GENERADORES DE EVENTOS=======================================================
@@ -577,9 +590,13 @@ GEN_EV_2_ES_7:
 
 GEN_EV_8:
 	;CONDICIONES ESTADO 0
-	
+	JB PUERTA_ABIERTA, GEN_EV_1_ES_8
+	MOV EVENTO, #01H
 	RET
 
+GEN_EV_1_ES_8:
+	MOV EVENTO, #01H
+	RET
 
 ;------------------------------------------------------------------------------------------------------------------
 ;================================================ACCIONES=======================================================
@@ -609,6 +626,9 @@ APAGAR_TIMER_15S:
 ACTIVAR_PWM0_60RPM:
 	RET
 
+APAGAR_PWM0:
+	RET
+
 CARGAR_DISPLAY_1:
 	MOV P0, DISPLAY_1		;hacemos el mov completo y luego corregimos en base al aux de bloqpuerta
 	JB COPIA_BP, SET_PB_1
@@ -633,31 +653,31 @@ CARGAR_DISPLAY_0:
 		CLR P2.7
 		RET
 
-CARGAR_TEMP_DSP_1:
+CARGAR_TEMP_DSP_0:
 	JNB BIT1_TEMP, COMPROBAR_B0T_B1_0
 	AJMP COMPROBAR_B0T_B1_1
 	RET
 
 	COMPROBAR_B0T_B1_0:
-		JB BIT0_TEMP, PINTAR_D1_T1
-		AJMP PINTAR_D1_T0
+		JB BIT0_TEMP, PINTAR_D0_T1
+		AJMP PINTAR_D0_T0
 		RET
 	COMPROBAR_B0T_B1_1:
-		JB BIT0_TEMP, PINTAR_D1_T3
-		AJMP PINTAR_D1_T2
+		JB BIT0_TEMP, PINTAR_D0_T3
+		AJMP PINTAR_D0_T2
 		RET
 	
-	PINTAR_D1_T0:
-		MOV DISPLAY_1, #0x3F
+	PINTAR_D0_T0:
+		MOV DISPLAY_0, #0x3F	;0
 		RET
-	PINTAR_D1_T1:
-		MOV DISPLAY_1, #0x06
+	PINTAR_D0_T1:
+		MOV DISPLAY_0, #0x06	;1
 		RET
-	PINTAR_D1_T2:
-		MOV DISPLAY_1, #0x5B
+	PINTAR_D0_T2:
+		MOV DISPLAY_0, #0x5B	;2
 		RET
-	PINTAR_D1_T3:
-		MOV DISPLAY_1, #0x4F
+	PINTAR_D0_T3:
+		MOV DISPLAY_0, #0x4F	;3
 		RET
 
 MAPEAR_TIEMPO_D1_D0:			;guardamos los valores de t restante por decenas y unidades en dos dir.
