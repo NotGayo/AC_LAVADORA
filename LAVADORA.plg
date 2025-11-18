@@ -4,34 +4,16 @@ linking...
 "LAVADORA" - 0 Error(s), 0 Warning(s).
 Build target 'Target 1'
 assembling LAVADORA.a...
-.\LAVADORA.a(104): error A45: UNDEFINED SYMBOL (PASS-2)
-.\LAVADORA.a(482): error A45: UNDEFINED SYMBOL (PASS-2)
-.\LAVADORA.a(493): error A45: UNDEFINED SYMBOL (PASS-2)
-.\LAVADORA.a(497): error A45: UNDEFINED SYMBOL (PASS-2)
-.\LAVADORA.a(542): error A45: UNDEFINED SYMBOL (PASS-2)
-Target not created
+linking...
+"LAVADORA" - 0 Error(s), 0 Warning(s).
 Build target 'Target 1'
 assembling LAVADORA.a...
-.\LAVADORA.a(104): error A45: UNDEFINED SYMBOL (PASS-2)
-.\LAVADORA.a(493): error A45: UNDEFINED SYMBOL (PASS-2)
-.\LAVADORA.a(497): error A45: UNDEFINED SYMBOL (PASS-2)
-.\LAVADORA.a(542): error A45: UNDEFINED SYMBOL (PASS-2)
-Target not created
+linking...
+"LAVADORA" - 0 Error(s), 0 Warning(s).
 Build target 'Target 1'
 assembling LAVADORA.a...
-.\LAVADORA.a(104): error A45: UNDEFINED SYMBOL (PASS-2)
-.\LAVADORA.a(493): error A45: UNDEFINED SYMBOL (PASS-2)
-.\LAVADORA.a(497): error A45: UNDEFINED SYMBOL (PASS-2)
-Target not created
-Build target 'Target 1'
-assembling LAVADORA.a...
-.\LAVADORA.a(493): error A45: UNDEFINED SYMBOL (PASS-2)
-.\LAVADORA.a(497): error A45: UNDEFINED SYMBOL (PASS-2)
-Target not created
-Build target 'Target 1'
-assembling LAVADORA.a...
-.\LAVADORA.a(493): error A45: UNDEFINED SYMBOL (PASS-2)
-Target not created
+linking...
+"LAVADORA" - 0 Error(s), 0 Warning(s).
 Build target 'Target 1'
 assembling LAVADORA.a...
 linking...

@@ -1,4 +1,4 @@
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/13/2025 15:07:10 PAGE     1
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/18/2025 10:09:06 PAGE     1
 
 
 MACRO ASSEMBLER A51 V6.14
@@ -65,16 +65,16 @@ LOC  OBJ            LINE     SOURCE
                       55     ;======================================INCIO===============================================
                              =
                       56     
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/13/2025 15:07:10 PAGE     2
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/18/2025 10:09:06 PAGE     2
 
 0000                  57     ORG 0x0000
 0000 017B             58             AJMP INICIO
 0003                  59     ORG 0X0003
-0003 81E1             60             AJMP INT0_ISR
+0003 81E6             60             AJMP INT0_ISR
 000B                  61     ORG 0x000B
-000B 81FC             62             AJMP TIMER_0_ISR
+000B A101             62             AJMP TIMER_0_ISR
 0053                  63     ORG 0X0053
-0053 81EE             64             AJMP ADC_ISR
+0053 81F3             64             AJMP ADC_ISR
 007B                  65     ORG 0X007b
                       66     
 007B                  67     INICIO:
@@ -109,7 +109,7 @@ LOC  OBJ            LINE     SOURCE
 009D 752100           95             MOV EVENTO, #0
 00A0 752505           96             MOV DISPLAY_1, #0x05
 00A3 752600           97             MOV DISPLAY_0, #0x00
-00A6 752260           98             MOV TIEMPO_RESTANTE_MINS, #0x60 ;INICIAMOS LOS MINUTOS RESTANTES DE LAVADO A 60 IRE
+00A6 75223C           98             MOV TIEMPO_RESTANTE_MINS, #0x3C ;INICIAMOS LOS MINUTOS RESTANTES DE LAVADO A 60 IRE
                              MOS RESTANDO DE UNO EN UNO
 00A9 C2AF             99             CLR IE.7
 00AB D2B2            100             SETB P3.2       ;DESACTIVAMOS A NIVEL BAJO LA INT0
@@ -133,12 +133,12 @@ LOC  OBJ            LINE     SOURCE
 00CF C286            118             CLR P0.6
 00D1 C287            119             CLR P0.7
                      120     
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/13/2025 15:07:10 PAGE     3
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/18/2025 10:09:06 PAGE     3
 
 00D3 C290            121             CLR P1.0
 00D5 D291            122             SETB P1.1
 00D7 C292            123             CLR P1.2
-00D9 D293            124             SETB P1.3
+00D9 C293            124             CLR P1.3
 00DB C294            125             CLR P1.4
 00DD C295            126             CLR P1.5
 00DF C296            127             CLR P1.6
@@ -170,49 +170,49 @@ LOC  OBJ            LINE     SOURCE
                              SISTEMA QUE NOS ENCONTRAMOS
                      152     
 00FF                 153     ESTADO_0:
-00FF 5184            154             ACALL GEN_EV_0
+00FF 5189            154             ACALL GEN_EV_0
 0101 312C            155             ACALL MQ_EVEN_0         ;REPOSO
 0103 22              156             RET
                      157     
 0104                 158     ESTADO_1:
-0104 519E            159             ACALL GEN_EV_1
+0104 51A3            159             ACALL GEN_EV_1
 0106 315B            160             ACALL MQ_EVEN_1         ;COMPROBANDO SP
 0108 22              161             RET
                      162     
 0109                 163     ESTADO_2:
-0109 51C9            164             ACALL GEN_EV_2
+0109 51CE            164             ACALL GEN_EV_2
 010B 31A3            165             ACALL MQ_EVEN_2
 010D 22              166             RET
                      167     
 010E                 168     ESTADO_3:
-010E 51D4            169             ACALL GEN_EV_3
+010E 51D9            169             ACALL GEN_EV_3
 0110 31BF            170             ACALL MQ_EVEN_3
 0112 22              171             RET
 0113                 172     ESTADO_4:
-0113 51DF            173             ACALL GEN_EV_4
+0113 51E4            173             ACALL GEN_EV_4
 0115 31DB            174             ACALL MQ_EVEN_4
 0117 22              175             RET
                      176     
 0118                 177     ESTADO_5:
-0118 710B            178             ACALL GEN_EV_5
+0118 7110            178             ACALL GEN_EV_5
 011A 31F6            179             ACALL MQ_EVEN_5
 011C 22              180             RET
                      181     
 011D                 182     ESTADO_6:
-011D 712A            183             ACALL GEN_EV_6
-011F 512A            184             ACALL MQ_EVEN_6
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/13/2025 15:07:10 PAGE     4
+011D 712F            183             ACALL GEN_EV_6
+011F 512C            184             ACALL MQ_EVEN_6
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/18/2025 10:09:06 PAGE     4
 
 0121 22              185             RET
                      186     
 0122                 187     ESTADO_7:
-0122 7135            188             ACALL GEN_EV_7
-0124 5143            189             ACALL MQ_EVEN_7
+0122 713A            188             ACALL GEN_EV_7
+0124 5148            189             ACALL MQ_EVEN_7
 0126 22              190             RET
                      191     
 0127                 192     ESTADO_8:
-0127 714B            193             ACALL GEN_EV_8
-0129 516A            194             ACALL MQ_EVEN_8
+0127 7150            193             ACALL GEN_EV_8
+0129 516F            194             ACALL MQ_EVEN_8
 012B 22              195             RET
                      196     
                      197     
@@ -237,8 +237,8 @@ LOC  OBJ            LINE     SOURCE
 013D C2A8            214             CLR IE.0
 013F 752677          215             MOV DISPLAY_0, #77H     ;A
 0142 752573          216             MOV DISPLAY_1, #73H     ;P
-0145 71F8            217             ACALL CARGAR_DISPLAY_0
-0147 71EF            218             ACALL CARGAR_DISPLAY_1  
+0145 71FD            217             ACALL CARGAR_DISPLAY_0
+0147 71F4            218             ACALL CARGAR_DISPLAY_1  
 0149 752002          219             MOV ESTADO, #02H
 014C 22              220             RET
 014D                 221     ME0_EV_2:
@@ -246,7 +246,7 @@ LOC  OBJ            LINE     SOURCE
 014D C2A8            223             CLR IE.0
 014F D2AF            224             SETB IE.7
 0151 D2AE            225             SETB IE.6
-0153 7156            226             ACALL ACTIVAR_ADC_PESO
+0153 715B            226             ACALL ACTIVAR_ADC_PESO
 0155 C2B2            227             CLR P3.2
 0157 752001          228             MOV ESTADO, #01H
 015A 22              229             RET
@@ -269,7 +269,7 @@ LOC  OBJ            LINE     SOURCE
 016D                 245     ME1_EV_1:       ;PULSA ENCENDIDO DE NUEVO
 016D 752000          246             MOV ESTADO, #0x00
 0170 D2A8            247             SETB IE.0
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/13/2025 15:07:10 PAGE     5
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/18/2025 10:09:06 PAGE     5
 
 0172 C2AE            248             CLR IE.6
 0174 22              249             RET
@@ -277,26 +277,26 @@ LOC  OBJ            LINE     SOURCE
 0175 752677          251             MOV DISPLAY_0, #77H     ;A
 0178 752573          252             MOV DISPLAY_1, #73H     ;P
 017B 752002          253             MOV ESTADO, #02H
-017E 71F8            254             ACALL CARGAR_DISPLAY_0
-0180 71EF            255             ACALL CARGAR_DISPLAY_1  
+017E 71FD            254             ACALL CARGAR_DISPLAY_0
+0180 71F4            255             ACALL CARGAR_DISPLAY_1  
 0182 22              256             RET
 0183                 257     ME1_EV_3:       ;HAY SOBREPESO
-0183 7164            258             ACALL APAGAR_ADC
+0183 7169            258             ACALL APAGAR_ADC
 0185 752673          259             MOV DISPLAY_0, #73H     ;P
 0188 75256D          260             MOV DISPLAY_1, #6DH     ;S
-018B 71F8            261             ACALL CARGAR_DISPLAY_0
-018D 71EF            262             ACALL CARGAR_DISPLAY_1
+018B 71FD            261             ACALL CARGAR_DISPLAY_0
+018D 71F4            262             ACALL CARGAR_DISPLAY_1
                      263                                             ;NO YA QUE SE QUIERE OBLIGAR AL USUARIO A ABRIR LA 
                              PUERTA y solo se mide peso una vez   no ACALL ACTIVAR_ADC_PESO
 018F 22              264             RET
 0190                 265     ME1_EV_4:       ;NO SOBREPESO Y ENCENDIDO
-0190 7164            266             ACALL APAGAR_ADC
+0190 7169            266             ACALL APAGAR_ADC
 0192 75253F          267             MOV DISPLAY_1, #3FH     ;t
 0195 D287            268             SETB BLOQUEO_PUERTA
-0197 911D            269             ACALL CARGAR_TEMP_DSP_0 ;Esta subrutina carga en DISPLAY_1 el valor de la temperatu
+0197 9122            269             ACALL CARGAR_TEMP_DSP_0 ;Esta subrutina carga en DISPLAY_1 el valor de la temperatu
                              ra actual
-0199 71F8            270             ACALL CARGAR_DISPLAY_0
-019B 71EF            271             ACALL CARGAR_DISPLAY_1
+0199 71FD            270             ACALL CARGAR_DISPLAY_0
+019B 71F4            271             ACALL CARGAR_DISPLAY_1
 019D D2B3            272             SETB VALV_ENTRADA_AGUA
 019F 752003          273             MOV ESTADO, #03H
 01A2 22              274             RET
@@ -315,11 +315,11 @@ LOC  OBJ            LINE     SOURCE
 01AE 22              286             RET
 01AF                 287     ME2_EV_1:       ;PUERTA CERRADA
 01AF 752001          288             MOV ESTADO, #01H
-01B2 911D            289             ACALL CARGAR_TEMP_DSP_0 ;Esta subrutina carga en DISPLAY_1 el valor de la temperatu
+01B2 9122            289             ACALL CARGAR_TEMP_DSP_0 ;Esta subrutina carga en DISPLAY_1 el valor de la temperatu
                              ra actual
-01B4 71F8            290             ACALL CARGAR_DISPLAY_0
-01B6 71EF            291             ACALL CARGAR_DISPLAY_1
-01B8 7156            292             ACALL ACTIVAR_ADC_PESO
+01B4 71FD            290             ACALL CARGAR_DISPLAY_0
+01B6 71F4            291             ACALL CARGAR_DISPLAY_1
+01B8 715B            292             ACALL ACTIVAR_ADC_PESO
 01BA D2AF            293             SETB IE.7
 01BC D2AE            294             SETB IE.6
 01BE 22              295             RET
@@ -337,16 +337,16 @@ LOC  OBJ            LINE     SOURCE
 01C8 21CB            306             AJMP ME3_EV_1 
 01CA                 307     ME3_EV_0:
 01CA 22              308             RET
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/13/2025 15:07:10 PAGE     6
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/18/2025 10:09:06 PAGE     6
 
 01CB                 309     ME3_EV_1:                       ;CUBA LLENA
 01CB 752004          310             MOV ESTADO, #04H
 01CE D2B6            311             SETB CALENTADOR_AGUA
-01D0 715D            312             ACALL ACTIVAR_ADC_TEMP
-01D2 716A            313             ACALL ACTIVAR_TIMER_0
+01D0 7162            312             ACALL ACTIVAR_ADC_TEMP
+01D2 716F            313             ACALL ACTIVAR_TIMER_0
 01D4 C238            314             CLR TICK_1S
 01D6 C2B3            315             CLR VALV_ENTRADA_AGUA
-01D8 9101            316             ACALL SET_TEMP_SELECT
+01D8 9106            316             ACALL SET_TEMP_SELECT
 01DA 22              317             RET
                      318     
                      319     ;==========================================ESTADO 4 - CALENTAMIENTO CUBA===================
@@ -364,13 +364,13 @@ LOC  OBJ            LINE     SOURCE
 01E8                 330     ME4_EV_0:
 01E8 22              331             RET
 01E9                 332     ME4_EV_1:       ; NO CALIENTE
-01E9 716A            333             ACALL ACTIVAR_TIMER_0
+01E9 716F            333             ACALL ACTIVAR_TIMER_0
 01EB 22              334             RET
 01EC                 335     ME4_EV_2:       ; AGUA CALIENTE
 01EC 752005          336             MOV ESTADO, #05H
 01EF C2B6            337             CLR CALENTADOR_AGUA
-01F1 716A            338             ACALL ACTIVAR_TIMER_0
-01F3 71E3            339             ACALL ACTIVAR_PWM0_60RPM
+01F1 716F            338             ACALL ACTIVAR_TIMER_0
+01F3 71E8            339             ACALL ACTIVAR_PWM0_60RPM
 01F5 22              340             RET
                      341     
                      342     ;==========================================ESTADO 5 - LAVADO===============================
@@ -389,677 +389,681 @@ LOC  OBJ            LINE     SOURCE
 0205                 354     ME5_EV_0:
 0205 22              355             RET
 0206                 356     ME5_EV_1:       ; PASA 15S
-0206 91D5            357             ACALL CAMBIAR_SENTIDO_GIRO
-0208 716A            358             ACALL ACTIVAR_TIMER_0
-020A 913F            359             ACALL MAPEAR_TIEMPO_D1_D0               ;ACTUALIZAMOS PARA PODER MODIFICAR EL PUERT
+0206 91DA            357             ACALL CAMBIAR_SENTIDO_GIRO
+0208 716F            358             ACALL ACTIVAR_TIMER_0
+020A 9144            359             ACALL MAPEAR_TIEMPO_D1_D0               ;ACTUALIZAMOS PARA PODER MODIFICAR EL PUERT
                              O 2.7
-020C 71F8            360             ACALL CARGAR_DISPLAY_0
-020E 71EF            361             ACALL CARGAR_DISPLAY_1
+020C 71FD            360             ACALL CARGAR_DISPLAY_0
+020E 71F4            361             ACALL CARGAR_DISPLAY_1
 0210 22              362             RET
 0211                 363     ME5_EV_2:       ; PASAN 1 MIN
 0211 1522            364             DEC TIEMPO_RESTANTE_MINS
-0213 913F            365             ACALL MAPEAR_TIEMPO_D1_D0               ;GUARDA EN DSP1 Y DSP0 LOS VALORES DEL TIEM
+0213 9144            365             ACALL MAPEAR_TIEMPO_D1_D0               ;GUARDA EN DSP1 Y DSP0 LOS VALORES DEL TIEM
                              PO
-0215 71F8            366             ACALL CARGAR_DISPLAY_0
-0217 71EF            367             ACALL CARGAR_DISPLAY_1
-0219 716A            368             ACALL ACTIVAR_TIMER_0           ;VOLVEMOS A ACTIVAR LA CUENTA DE 15S
+0215 71FD            366             ACALL CARGAR_DISPLAY_0
+0217 71F4            367             ACALL CARGAR_DISPLAY_1
+0219 716F            368             ACALL ACTIVAR_TIMER_0           ;VOLVEMOS A ACTIVAR LA CUENTA DE 15S
 021B 22              369             RET
 021C                 370     ME5_EV_3:       ; PASAN 50 MIN
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/13/2025 15:07:10 PAGE     7
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/18/2025 10:09:06 PAGE     7
 
-021C 913F            371             ACALL MAPEAR_TIEMPO_D1_D0               ;GUARDA EN DSP1 Y DSP0 LOS VALORES DEL TIEM
+021C 1522            371             DEC TIEMPO_RESTANTE_MINS
+021E 9144            372             ACALL MAPEAR_TIEMPO_D1_D0               ;GUARDA EN DSP1 Y DSP0 LOS VALORES DEL TIEM
                              PO
-021E 71F8            372             ACALL CARGAR_DISPLAY_0
-0220 71EF            373             ACALL CARGAR_DISPLAY_1
-0222 71E2            374             ACALL APAGAR_TIMER
-0224 752006          375             MOV ESTADO, #06H
-0227 D290            376             SETB MOTOR_DESAGUE
-0229 22              377             RET
-                     378     
-                     379     ;==========================================ESTADO 6 - VACIAR AGUA==========================
+0220 71FD            373             ACALL CARGAR_DISPLAY_0
+0222 71F4            374             ACALL CARGAR_DISPLAY_1
+0224 71E7            375             ACALL APAGAR_TIMER
+0226 752006          376             MOV ESTADO, #06H
+0229 D290            377             SETB MOTOR_DESAGUE
+022B 22              378             RET
+                     379     
+                     380     ;==========================================ESTADO 6 - VACIAR AGUA==========================
                              =================================
-                     380     
-022A                 381     MQ_EVEN_6:
-022A E521            382             MOV A, EVENTO
-022C 23              383             RL A
-022D 900231          384             MOV DPTR, #LIST_EVEN_MQEV_6
-0230 73              385             JMP @A+DPTR
-0231                 386     LIST_EVEN_MQEV_6:
-0231 4135            387             AJMP ME6_EV_0 ; Evento 0
-0233 4136            388             AJMP ME6_EV_1
-0235                 389     ME6_EV_0:
-0235 22              390             RET
-0236                 391     ME6_EV_1:       ; CUBA VACIA
-0236 71E7            392             ACALL ACTIVAR_PWM0_600RPM
-0238 716A            393             ACALL ACTIVAR_TIMER_0
-023A D2A7            394             SETB SENTIDO_GIRO_MOTOR
-023C 913F            395             ACALL MAPEAR_TIEMPO_D1_D0
-023E 71EF            396             ACALL CARGAR_DISPLAY_1
-0240 71F8            397             ACALL CARGAR_DISPLAY_0
-0242 22              398             RET
-                     399     
-                     400     ;==========================================ESTADO 7 - CENTRIFUGAR==========================
-                             =================================
+                     381     
+022C                 382     MQ_EVEN_6:
+022C E521            383             MOV A, EVENTO
+022E 23              384             RL A
+022F 900233          385             MOV DPTR, #LIST_EVEN_MQEV_6
+0232 73              386             JMP @A+DPTR
+0233                 387     LIST_EVEN_MQEV_6:
+0233 4137            388             AJMP ME6_EV_0 ; Evento 0
+0235 4138            389             AJMP ME6_EV_1
+0237                 390     ME6_EV_0:
+0237 22              391             RET
+0238                 392     ME6_EV_1:       ; CUBA VACIA
+0238 71EC            393             ACALL ACTIVAR_PWM0_600RPM
+023A 716F            394             ACALL ACTIVAR_TIMER_0
+023C D2A7            395             SETB SENTIDO_GIRO_MOTOR
+023E 9144            396             ACALL MAPEAR_TIEMPO_D1_D0
+0240 71F4            397             ACALL CARGAR_DISPLAY_1
+0242 71FD            398             ACALL CARGAR_DISPLAY_0
+0244 752007          399             MOV ESTADO, #07H
+0247 22              400             RET
                      401     
-0243                 402     MQ_EVEN_7:
-0243 E521            403             MOV A, EVENTO
-0245 23              404             RL A
-0246 90024A          405             MOV DPTR, #LIST_EVEN_MQEV_7
-0249 73              406             JMP @A+DPTR
-024A                 407     LIST_EVEN_MQEV_7:
-024A 4150            408             AJMP ME7_EV_0   ; Evento 0
-024C 4151            409             AJMP ME7_EV_1   ; PASAN LOS 10MIN ACABAMOS EL CENTRIF.
-024E 4163            410             AJMP ME7_EV_2   ; ACTUALIZAR TIEMPO Y NO 10 MINS DE CENTRIF.
-0250                 411     ME7_EV_0:
-0250 22              412             RET
-0251                 413     ME7_EV_1:       ; PASAN 10 MIN
-0251 752008          414             MOV ESTADO, #08H
-0254 71EB            415             ACALL APAGAR_PWM0
-0256 C287            416             CLR BLOQUEO_PUERTA
-0258 853825          417             MOV DISPLAY_1, 0x38     ;L
-025B 857126          418             MOV DISPLAY_0, 0x71     ;F
-025E 71F8            419             ACALL CARGAR_DISPLAY_0
-0260 71EF            420             ACALL CARGAR_DISPLAY_1 
-0262 22              421             RET
-                     422     
-0263                 423     ME7_EV_2:       ; PASA 1 MIN
-0263 913F            424             ACALL MAPEAR_TIEMPO_D1_D0               ;GUARDA EN DSP1 Y DSP0 LOS VALORES DEL TIEM
-                             PO
-0265 71F8            425             ACALL CARGAR_DISPLAY_0
-0267 71EF            426             ACALL CARGAR_DISPLAY_1
-0269 22              427             RET
-                     428     
-                     429     ;==========================================ESTADO 8 - FIN==================================
-                             =========================
-                     430     
-026A                 431     MQ_EVEN_8:
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/13/2025 15:07:10 PAGE     8
-
-026A E521            432             MOV A, EVENTO
-026C 23              433             RL A
-026D 900271          434             MOV DPTR, #LIST_EVEN_MQEV_8
-0270 73              435             JMP @A+DPTR
-0271                 436     LIST_EVEN_MQEV_8:
-0271 4175            437             AJMP ME8_EV_0 ; Evento 0
-0273 4176            438             AJMP ME8_EV_1
-0275                 439     ME8_EV_0:
-0275 22              440             RET
-0276                 441     ME8_EV_1:                       ; PUERTA ABIERTA
-0276 752677          442             MOV DISPLAY_0, #77H     ; A
-0279 752573          443             MOV DISPLAY_1, #73H     ; P
-027C 752002          444             MOV ESTADO, #02H
-027F 71F8            445             ACALL CARGAR_DISPLAY_0
-0281 71EF            446             ACALL CARGAR_DISPLAY_1  
-0283 22              447             RET
-                     448     
-                     449     ;==============================================GENERADORES DE EVENTOS======================
+                     402     ;==========================================ESTADO 7 - CENTRIFUGAR==========================
                              =================================
-                     450     
-                     451     ;-------------------------------------------------------0----------------------------------
-                             -------------------------
-                     452     
-0284                 453     GEN_EV_0:
-                     454             ;CONDICIONES ESTADO 0
-0284 30B204          455             JNB P3.2, COMPROBAR_PUERTA      ;SI NO ESTA EL BOTON NI NOS MOLESTAMOS EN VER EL RE
-                             STO DE CONDICIONES 
-0287 752100          456             MOV EVENTO, #00H                ;ESTAMOS SEGURO EN ESTADO 0 SI NO ESTA P3.2
-028A 22              457             RET
-                     458     
-028B                 459     COMPROBAR_PUERTA:
-028B 209102          460             JB PUERTA_ABIERTA, GEN_EV_1_ES_0
-028E 4197            461             AJMP GEN_EV_2_ES_0
-                     462     
-0290                 463     GEN_EV_1_ES_0:
-0290 5387FE          464             ANL PCON, #0xFE                 ;QUITAMOS EL IDLE MODIFICANDO EL BIT 0 DEL PCON
-0293 752101          465             MOV EVENTO, #01H                ;EN EL CASO DE QUE SI ESTE LA PUERTA ABIERTA EVENTO
-                              1 ESTADO 0
-0296 22              466             RET
-                     467     
-0297                 468     GEN_EV_2_ES_0:
-0297 5387FE          469             ANL PCON, #0xFE                 ;QUITAMOS EL IDLE MODIFICANDO EL BIT 0 DEL PCON
-029A 752102          470             MOV EVENTO, #02H                ;EN EL CASO DE QUE SI ESTE LA PUERTA ABIERTA EVENTO
-                              2 ESTADO 0
-029D 22              471             RET
-                     472     
-                     473     
-                     474     
-                     475     ;-------------------------------------------------------1----------------------------------
-                             --------------------------
-                     476     
-029E                 477     GEN_EV_1:
-                     478             ;CONDICIONES ESTADO 1
-029E 20B20A          479             JB P3.2, GEN_EV_1_ES_1
-02A1 20910B          480             JB PUERTA_ABIERTA, GEN_EV_2_ES_1
-                     481             ;ADC
-02A4 201918          482             JB TICK_ADC, HAY_SP
-02A7 752100          483             MOV EVENTO,#00H
-02AA 22              484             RET
-                     485     
-02AB                 486     GEN_EV_1_ES_1:
-02AB 752101          487             MOV EVENTO, #01H
-02AE 22              488             RET
-02AF                 489     GEN_EV_2_ES_1:
-02AF 752102          490             MOV EVENTO, #02H
-02B2 22              491             RET
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/13/2025 15:07:10 PAGE     9
-
-02B3                 492     GEN_EV_3_ES_1:
-02B3 C219            493             CLR TICK_ADC
-02B5 752103          494             MOV EVENTO, #03H
-02B8 22              495             RET
-02B9                 496     GEN_EV_4_ES_1:
-02B9 C219            497             CLR TICK_ADC
-02BB 752104          498             MOV EVENTO, #04H
-02BE 22              499             RET
-                     500     
-02BF                 501     HAY_SP:
-02BF E530            502             MOV A, VALOR_ADC
-02C1 94E6            503             SUBB A, #0xE6; <-  VALOR SP EQUIVALE A 4.5 VOLTIOS 230d 
-02C3 50EE            504             JNC GEN_EV_3_ES_1       ;SI EL RESULTADO ES NEGATIVO (HAY CARRY) VALOR SP > ADCH PE
-                             SO OK
-02C5 2094F1          505             JB BOTON_INICIO, GEN_EV_4_ES_1  ;SI NO SI ESTA INICIO PULSADO PASAMOS AL EVENTO 4
-02C8 22              506             RET
-                     507             
-                     508     ;------------------------------------------------------2-----------------------------------
-                             -------------------------
-                     509     
-02C9                 510     GEN_EV_2:
-                     511             ;CONDICIONES ESTADO 0
-02C9 309104          512             JNB PUERTA_ABIERTA,  GEN_EV_1_ES_2
-02CC 752100          513             MOV EVENTO, #00H
-02CF 22              514             RET
-                     515     
-02D0                 516     GEN_EV_1_ES_2:
-02D0 752101          517             MOV EVENTO, #01H
-02D3 22              518             RET
-                     519     
-                     520     
-                     521     ;--------------------------------------------------------3---------------------------------
-                             -------------------------
-                     522     
-02D4                 523     GEN_EV_3:
-                     524             ;CONDICIONES ESTADO 3
-02D4 209204          525             JB SENSOR_LLENADO, GEN_EV_1_ES_3
-02D7 752100          526             MOV EVENTO, #00H
-02DA 22              527             RET
-                     528     
-02DB                 529     GEN_EV_1_ES_3:
-02DB 752101          530             MOV EVENTO, #01H
-02DE 22              531             RET
-                     532     
-                     533     ;----------------------------------------------------------4-------------------------------
-                             -------------------------
-                     534     
-02DF                 535     GEN_EV_4:
-                     536             ;CONDICIONES ESTADO 44
-02DF 203804          537             JB TICK_1S, COMP_TICK_ADC
-02E2 752100          538             MOV EVENTO, #00H
-02E5 22              539             RET
-                     540     
-02E6                 541     COMP_TICK_ADC:
-02E6 201904          542             JB TICK_ADC, COMPROBAR_TEMP
-02E9 752100          543             MOV EVENTO, #00H
-02EC 22              544             RET
-                     545     
-02ED                 546     COMPROBAR_TEMP:
-02ED 20B106          547             JB P3.1, COMP_T3_T2_T1
-02F0 20B003          548             JB P3.0, COMP_T3_T2_T1
-02F3 6105            549             AJMP GEN_EV_2_ES_4                      ;SI TEMP1 - 0 Y TEMP0 - 0 ENTONCES T0 Y COM
-                             O ESTE ESTA OK
-02F5 22              550             RET
-                     551     
-02F6                 552             COMP_T3_T2_T1:                          ;SOLO SET TEMP_SEL SI T1,T2,T3 YA QUE T0 US
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/13/2025 15:07:10 PAGE    10
-
-                             A AGUA TAL CUAL
-02F6 E530            553                     MOV A, VALOR_ADC
-02F8 952A            554                     SUBB A, TEMP_SEL                ; SUSTITUIR EL VALOR DE 00H POR TEMP MINA A
-                             LCANZAR
-02FA 4003            555                     JC GEN_EV_1_ES_4
-02FC 6105            556                     AJMP GEN_EV_2_ES_4
-02FE 22              557                     RET
-                     558     
-                     559     
-                     560     
-02FF                 561     GEN_EV_1_ES_4:                          ; NO CALIENTE
-02FF C238            562             CLR TICK_1S
-0301 752101          563             MOV EVENTO, #01H
-0304 22              564             RET
-                     565     
-0305                 566     GEN_EV_2_ES_4:                          ; SI CALIENTE
-0305 C238            567             CLR TICK_1S
-0307 752102          568             MOV EVENTO, #02H
-030A 22              569             RET
-                     570     ;------------------------------------------------------------------------------------------
-                             ------------------------
-                     571     
-030B                 572     GEN_EV_5:
-                     573             ;CONDICIONES ESTADO 0
-030B 203B16          574             JB TICK_50MIN, GEN_EV_3_ES_5
-030E 203A0D          575             JB TICK_1MIN, GEN_EV_2_ES_5
-0311 203904          576             JB TICK_15S, GEN_EV_1_ES_5
-0314 752100          577             MOV EVENTO, #00H
-0317 22              578             RET
-                     579     
-0318                 580     GEN_EV_1_ES_5:  ;15 SEG
-0318 C239            581             CLR TICK_15S
-031A 752101          582             MOV EVENTO,#01H
-031D 22              583             RET
-                     584     
-031E                 585     GEN_EV_2_ES_5:  ;1MIN
-031E C23A            586             CLR TICK_1MIN
-0320 752102          587             MOV EVENTO,#02H
-0323 22              588             RET
-                     589     
-0324                 590     GEN_EV_3_ES_5:  ;50MIN
-0324 C23B            591             CLR TICK_50MIN
-0326 752103          592             MOV EVENTO,#03H
-0329 22              593             RET
-                     594     
-                     595     ;------------------------------------------------------------------------------------------
-                             ------------------------
-                     596     
-032A                 597     GEN_EV_6:
-                     598             ;CONDICIONES ESTADO 0
-032A 209304          599             JB SENSOR_VACIADO, GEN_EV_1_ES_6
-032D 752100          600             MOV EVENTO, #00H
-0330 22              601             RET
-                     602     
-0331                 603     GEN_EV_1_ES_6:
-0331 752101          604             MOV EVENTO, #01H
-0334 22              605             RET
-                     606     ;------------------------------------------------------------------------------------------
-                             ------------------------
-                     607     
-0335                 608     GEN_EV_7:
-                     609             ;CONDICIONES ESTADO 7
-0335 203C07          610             JB TICK_10MIN, GEN_EV_1_ES_7
-0338 203A0A          611             JB TICK_1MIN, GEN_EV_2_ES_7
-033B 752100          612             MOV EVENTO, #00H
-033E 22              613             RET
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/13/2025 15:07:10 PAGE    11
-
-                     614     
-033F                 615     GEN_EV_1_ES_7:
-033F C23C            616             CLR TICK_10MIN
-0341 752101          617             MOV EVENTO, #01H
-0344 22              618             RET
-                     619     
-0345                 620     GEN_EV_2_ES_7:
-0345 C23A            621             CLR TICK_1MIN
-0347 752102          622             MOV EVENTO, #02H
-034A 22              623             RET
-                     624     ;------------------------------------------------------------------------------------------
-                             ------------------------
-                     625     
-034B                 626     GEN_EV_8:
-                     627             ;CONDICIONES ESTADO 0
-034B 209104          628             JB PUERTA_ABIERTA, GEN_EV_1_ES_8
-034E 752100          629             MOV EVENTO, #00H
-0351 22              630             RET
-                     631     
-0352                 632     GEN_EV_1_ES_8:
-0352 752101          633             MOV EVENTO, #01H
-0355 22              634             RET
-                     635     
-                     636     ;------------------------------------------------------------------------------------------
-                             ------------------------
-                     637     ;================================================ACCIONES==================================
-                             =====================
-                     638     
-0356                 639     ACTIVAR_ADC_PESO:                       ;SELECCIONAMOS EL CANAL 0 PARA PESO
-0356 53C5E8          640             ANL ADCON,#0xE8
-0359 43C508          641             ORL ADCON,#0x08
-035C 22              642             RET
-                     643     
-035D                 644     ACTIVAR_ADC_TEMP:                       ;SELECCIONAMOS EL CANAL 1 PARA TEMP
-035D 53C5E6          645             ANL ADCON, #0xE6
-0360 43C509          646             ORL ADCON, #0x09
-0363 22              647             RET
-0364                 648     APAGAR_ADC:
-0364 C2AE            649             CLR IE.6
-0366 53C5E0          650             ANL ADCON, #0xE0
-0369 22              651             RET
-                     652     
-                     653     
-036A                 654     ACTIVAR_TIMER_0:
-036A 303D03          655             JNB PRIMERA_VUELTA, ACTIVAR_TIMER_0_PRIMERA_VUELTA
-036D 6182            656             AJMP ACTIVAR_TIMER_0_FULL
-036F 22              657             RET
-                     658     
-0370                 659     ACTIVAR_TIMER_0_PRIMERA_VUELTA:
-0370 758901          660             MOV TMOD, #0x01
-0373 758C7B          661             MOV TH0, #0x7B
-0376 758A80          662             MOV TL0, #0x80
-0379 D2AF            663             SETB IE.7
-037B D2A9            664             SETB IE.1
-037D D23D            665             SETB PRIMERA_VUELTA
-037F D28C            666             SETB TR0
-0381 22              667             RET
-                     668     
-0382                 669     ACTIVAR_TIMER_0_FULL:
-0382 758901          670             MOV TMOD, #0x01
-0385 758C00          671             MOV TH0, #0x00
-0388 758A00          672             MOV TL0, #0x00
-038B D2AF            673             SETB IE.7
-038D D2A9            674             SETB IE.1
-038F D28C            675             SETB TR0
-0391 22              676             RET
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/13/2025 15:07:10 PAGE    12
-
-                     677     
-0392                 678     ACTUALIZAR_CONT_TIMER_0:
-                     679             
-0392 E52B            680             MOV A, CONT_INTERRUPCIONES_T0
-0394 941E            681             SUBB A, #0x1E
-0396 6019            682             JZ PASAN_1SEG
-                     683     
-0398 E52C            684             MOV A, CONT_1S
-039A 940F            685             SUBB A, #0x0F
-039C 601F            686             JZ PASAN_15SEG
-                     687             
-039E E52D            688             MOV A, CONT_15S
-03A0 9404            689             SUBB A, #0x04
-03A2 6023            690             JZ PASAN_1MIN
-                     691     
-03A4 E52E            692             MOV A, CONT_1MIN
-03A6 940A            693             SUBB A, #0x0A
-03A8 6027            694             JZ PASAN_10MIN
-                     695             
-03AA E52F            696             MOV A, CONT_10MIN
-03AC 9405            697             SUBB A, #0x05
-03AE 602B            698             JZ PASAN_50MIN
-03B0 22              699             RET
-                     700             
-03B1                 701             PASAN_1SEG:
-03B1 052C            702                     INC CONT_1S
-03B3 752B00          703                     MOV CONT_INTERRUPCIONES_T0, #00H
-03B6 C23D            704                     CLR PRIMERA_VUELTA                      ;CUANDO SE VUELVA A ACTIVAR T0 LO H
-                             ARA DE FORMA
-03B8 D238            705                     SETB TICK_1S
-03BA 6192            706                     AJMP ACTUALIZAR_CONT_TIMER_0
-03BC 22              707                     RET
-03BD                 708             PASAN_15SEG:
-03BD 052D            709                     INC CONT_15S
-03BF 752C00          710                     MOV CONT_1S, #00H
-03C2 D239            711                     SETB TICK_15S
-03C4 6192            712                     AJMP ACTUALIZAR_CONT_TIMER_0
-03C6 22              713                     RET
-03C7                 714             PASAN_1MIN:
-03C7 052E            715                     INC CONT_1MIN
-03C9 752D00          716                     MOV CONT_15S, #00H
-03CC D23A            717                     SETB TICK_1MIN
-03CE 6192            718                     AJMP ACTUALIZAR_CONT_TIMER_0
-03D0 22              719                     RET
-03D1                 720             PASAN_10MIN:
-03D1 052F            721                     INC CONT_10MIN
-03D3 752E00          722                     MOV CONT_1MIN, #00H
-03D6 D23C            723                     SETB TICK_10MIN
-03D8 6192            724                     AJMP ACTUALIZAR_CONT_TIMER_0
-03DA 22              725                     RET
-03DB                 726             PASAN_50MIN:
-03DB D23B            727                     SETB TICK_50MIN
-03DD 752F00          728                     MOV CONT_10MIN, #00H
-03E0 22              729                     RET
-                     730     
-                     731     
-                     732     
-                     733             ;SI CONT_INT_TO = 31 ENTONCES tick_1s
-                     734             ;si tick_1s inc cont 1s
-                     735             ;si cont1_1s = 15 ENTONCES tick_15s
-                     736             ;si tick 15s inc cont_15s
-                     737             ;si cont_15s = 4 entonces tick_1min
-                     738             ;si tick_1min inc cont_1min
-                     739             ;si cont_1min = 10 ENTONCES tick_10min
-                     740             ;si tick_10min inc cont_10min
-                     741             ;si cont_10min = 5 ENTONCES tick_50min
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/13/2025 15:07:10 PAGE    13
-
-                     742     
-                     743     
-03E1 22              744             RET
-03E2                 745     APAGAR_TIMER:
-03E2 22              746             RET
-                     747     
-03E3                 748     ACTIVAR_PWM0_60RPM:
-03E3 75FC1A          749             MOV PWM0, #0x1A
-03E6 22              750             RET
-                     751     
-03E7                 752     ACTIVAR_PWM0_600RPM:
-03E7 75FCE6          753             MOV PWM0, #0xE6
-03EA 22              754             RET
-                     755     
-03EB                 756     APAGAR_PWM0:
-03EB 8500FC          757             MOV PWM0, 0x00
-03EE 22              758             RET
-                     759     
-03EF                 760     CARGAR_DISPLAY_1:
-03EF 7480            761             MOV A, #0x80
-03F1 5280            762             ANL P0, A               ; 1000 0000 -> nos settea todo a 0 menos el .7
-03F3 E525            763             MOV A, DISPLAY_1
-03F5 4280            764             ORL P0, A               ; dsp1 siempre tiene un 0 en .7 por ello no modifica p0.7
-03F7 22              765             RET
-                     766     
-03F8                 767     CARGAR_DISPLAY_0:
-03F8 7480            768             MOV A, #0x80
-03FA 52A0            769             ANL P2, A               ; 1000 0000 -> nos settea todo a 0 menos el .7
-03FC E526            770             MOV A, DISPLAY_0
-03FE 42A0            771             ORL P2, A               ; dsp1 siempre tiene un 0 en .7 por ello no modifica p0.7
-0400 22              772             RET
-                     773     
-                     774     
-0401                 775     SET_TEMP_SELECT:
-0401 20B103          776             JB P3.1, SET_T_ALTAS
-0404 810D            777             AJMP SET_T_BAJAS
-0406 22              778             RET
-                     779             
-0407                 780             SET_T_ALTAS:
-0407 20B007          781                     JB P3.0, SET_T_T3
-040A 8115            782                     AJMP SET_T_T2
-040C 22              783                     RET
-040D                 784             SET_T_BAJAS:
-040D 20B009          785                     JB P3.0, SET_T_T1
-0410 22              786                     RET
-                     787     
-0411                 788                     SET_T_T3:
-0411 752ACD          789                             MOV TEMP_SEL, #0xCD
-0414 22              790                             RET
-0415                 791                     SET_T_T2:
-0415 752A9A          792                             MOV TEMP_SEL, #0x9A
-0418 22              793                             RET
-0419                 794                     SET_T_T1:
-0419 752A66          795                             MOV TEMP_SEL, #0x66
-041C 22              796                             RET
-                     797             
-041D                 798     CARGAR_TEMP_DSP_0:
-041D 30B103          799             JNB BIT1_TEMP, COMPROBAR_B0T_B1_0
-0420 8129            800             AJMP COMPROBAR_B0T_B1_1
-0422 22              801             RET
-                     802     
-0423                 803             COMPROBAR_B0T_B1_0:
-0423 20B00D          804                     JB BIT0_TEMP, PINTAR_D0_T1
-0426 812F            805                     AJMP PINTAR_D0_T0
-0428 22              806                     RET
-0429                 807             COMPROBAR_B0T_B1_1:
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/13/2025 15:07:10 PAGE    14
-
-0429 20B00F          808                     JB BIT0_TEMP, PINTAR_D0_T3
-042C 8137            809                     AJMP PINTAR_D0_T2
-042E 22              810                     RET
-                     811             
-042F                 812             PINTAR_D0_T0:
-042F 75263F          813                     MOV DISPLAY_0, #0x3F    ;0
-0432 22              814                     RET
-0433                 815             PINTAR_D0_T1:
-0433 752606          816                     MOV DISPLAY_0, #0x06    ;1
-0436 22              817                     RET
-0437                 818             PINTAR_D0_T2:
-0437 75265B          819                     MOV DISPLAY_0, #0x5B    ;2
-043A 22              820                     RET
-043B                 821             PINTAR_D0_T3:
-043B 75264F          822                     MOV DISPLAY_0, #0x4F    ;3
-043E 22              823                     RET
-                     824     
-043F                 825     MAPEAR_TIEMPO_D1_D0:                    ;guardamos los valores de t restante por decenas y 
-                             unidades en dos dir.
-043F E522            826             MOV A,TIEMPO_RESTANTE_MINS
-0441 75F00A          827             MOV B, #0AH
-0444 84              828             DIV AB                          ; APROVECHAMOS QUE ADCH/10 COCIENTE -> A (decenas) 
-                             Y RESTO -> B (unidades)
-0445 F528            829             MOV DECENAS, A
-0447 85F029          830             MOV UNIDADES, B
-                     831             
-044A 914F            832             ACALL MAP_DEC_D1
-044C 9192            833             ACALL MAP_UNI_D0
-                     834     
-044E 22              835             RET
-                     836     
-044F                 837             MAP_DEC_D1:
-044F E528            838                     MOV A, DECENAS
-0451 23              839                     RL A
-0452 900456          840                     MOV DPTR, #LISTA_DECENAS
-0455 73              841                     JMP @A+DPTR
-0456                 842             LISTA_DECENAS:
-0456 816A            843                     AJMP CD0
-0458 816E            844                     AJMP CD1
-045A 8172            845                     AJMP CD2
-045C 8176            846                     AJMP CD3
-045E 817A            847                     AJMP CD4
-0460 817E            848                     AJMP CD5
-0462 8182            849                     AJMP CD6
-0464 8186            850                     AJMP CD7
-0466 818A            851                     AJMP CD8
-0468 818E            852                     AJMP CD9
-                     853             
-046A                 854             CD0:
-046A 75253F          855                     MOV DISPLAY_1, #0x3F
-046D 22              856                     RET
-046E                 857             CD1:
-046E 752506          858                     MOV DISPLAY_1, #0x06
-0471 22              859                     RET
-0472                 860             CD2:
-0472 75255B          861                     MOV DISPLAY_1, #0x5B
-0475 22              862                     RET
-0476                 863             CD3:
-0476 75254F          864                     MOV DISPLAY_1, #0x4F
-0479 22              865                     RET
-047A                 866             CD4:
-047A 752566          867                     MOV DISPLAY_1, #0x66
-047D 22              868                     RET
-047E                 869             CD5:
-047E 75256D          870                     MOV DISPLAY_1, #0x6D
-0481 22              871                     RET
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/13/2025 15:07:10 PAGE    15
-
-0482                 872             CD6:
-0482 75257D          873                     MOV DISPLAY_1, #0x7D
-0485 22              874                     RET
-0486                 875             CD7:
-0486 752507          876                     MOV DISPLAY_1, #0x07
-0489 22              877                     RET
-048A                 878             CD8:
-048A 75257F          879                     MOV DISPLAY_1, #0x7F
-048D 22              880                     RET
-048E                 881             CD9:
-048E 75256F          882                     MOV DISPLAY_1, #0x6F
-0491 22              883                     RET
-                     884     
-0492                 885             MAP_UNI_D0:
-0492 E529            886                     MOV A, UNIDADES
-0494 23              887                     RL A
-0495 900499          888                     MOV DPTR, #LISTA_UNIDADES
-0498 73              889                     JMP @A+DPTR
-0499                 890             LISTA_UNIDADES:
-0499 81AD            891                     AJMP CU0
-049B 81B1            892                     AJMP CU1
-049D 81B5            893                     AJMP CU2
-049F 81B9            894                     AJMP CU3
-04A1 81BD            895                     AJMP CU4
-04A3 81C1            896                     AJMP CU5
-04A5 81C5            897                     AJMP CU6
-04A7 81C9            898                     AJMP CU7
-04A9 81CD            899                     AJMP CU8
-04AB 81D1            900                     AJMP CU9
-                     901             
-04AD                 902             CU0:
-04AD 75263F          903                     MOV DISPLAY_0, #0x3F
-04B0 22              904                     RET
-04B1                 905             CU1:
-04B1 752606          906                     MOV DISPLAY_0, #0x06
-04B4 22              907                     RET
-04B5                 908             CU2:
-04B5 75265B          909                     MOV DISPLAY_0, #0x5B
-04B8 22              910                     RET
-04B9                 911             CU3:
-04B9 75264F          912                     MOV DISPLAY_0, #0x4F
-04BC 22              913                     RET
-04BD                 914             CU4:
-04BD 752666          915                     MOV DISPLAY_0, #0x66
-04C0 22              916                     RET
-04C1                 917             CU5:
-04C1 75266D          918                     MOV DISPLAY_0, #0x6D
-04C4 22              919                     RET
-04C5                 920             CU6:
-04C5 75267D          921                     MOV DISPLAY_0, #0x7D
-04C8 22              922                     RET
-04C9                 923             CU7:
-04C9 752607          924                     MOV DISPLAY_0, #0x07
-04CC 22              925                     RET
-04CD                 926             CU8:
-04CD 75267F          927                     MOV DISPLAY_0, #0x7F
-04D0 22              928                     RET
-04D1                 929             CU9:
-04D1 75266F          930                     MOV DISPLAY_0, #0x6F
-04D4 22              931                     RET
-                     932     
-04D5                 933     CAMBIAR_SENTIDO_GIRO:
-04D5 20A703          934             JB SENTIDO_GIRO_MOTOR, FALSE_SG                 ;SI SENT 1 -> VAMOS A SET0
-04D8 81DE            935             AJMP TRUE_SG                                    ;SI SENT 0 -> SET1
-04DA 22              936             RET
-04DB                 937             FALSE_SG:
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/13/2025 15:07:10 PAGE    16
-
-04DB C2A7            938                     CLR SENTIDO_GIRO_MOTOR
-04DD 22              939                     RET
-04DE                 940             TRUE_SG:
-04DE D2A7            941                     SETB SENTIDO_GIRO_MOTOR
-04E0 22              942                     RET
-                     943     ;==============================================INTERRUPCIONES==============================
+                     403     
+0248                 404     MQ_EVEN_7:
+0248 E521            405             MOV A, EVENTO
+024A 23              406             RL A
+024B 90024F          407             MOV DPTR, #LIST_EVEN_MQEV_7
+024E 73              408             JMP @A+DPTR
+024F                 409     LIST_EVEN_MQEV_7:
+024F 4155            410             AJMP ME7_EV_0   ; Evento 0
+0251 4156            411             AJMP ME7_EV_1   ; PASAN LOS 10MIN ACABAMOS EL CENTRIF.
+0253 4168            412             AJMP ME7_EV_2   ; ACTUALIZAR TIEMPO Y NO 10 MINS DE CENTRIF.
+0255                 413     ME7_EV_0:
+0255 22              414             RET
+0256                 415     ME7_EV_1:       ; PASAN 10 MIN
+0256 752008          416             MOV ESTADO, #08H
+0259 71F0            417             ACALL APAGAR_PWM0
+025B C287            418             CLR BLOQUEO_PUERTA
+025D 853825          419             MOV DISPLAY_1, 0x38     ;L
+0260 857126          420             MOV DISPLAY_0, 0x71     ;F
+0263 71FD            421             ACALL CARGAR_DISPLAY_0
+0265 71F4            422             ACALL CARGAR_DISPLAY_1 
+0267 22              423             RET
+                     424     
+0268                 425     ME7_EV_2:       ; PASA 1 MIN
+0268 9144            426             ACALL MAPEAR_TIEMPO_D1_D0               ;GUARDA EN DSP1 Y DSP0 LOS VALORES DEL TIEM
+                             PO
+026A 71FD            427             ACALL CARGAR_DISPLAY_0
+026C 71F4            428             ACALL CARGAR_DISPLAY_1
+026E 22              429             RET
+                     430     
+                     431     ;==========================================ESTADO 8 - FIN==================================
                              =========================
-                     944     
-04E1                 945     INT0_ISR:
-04E1 C0E0            946             PUSH ACC
-04E3 C0D0            947             PUSH PSW
-04E5 D218            948             SETB TICK_INT_0
-04E7 C2A8            949             CLR IE.0
-04E9 D0D0            950             POP PSW
-04EB D0E0            951             POP ACC
-04ED 32              952             RETI
-                     953     
-04EE                 954     ADC_ISR:
-04EE C0E0            955             PUSH ACC
-04F0 C0D0            956             PUSH PSW
-04F2 D219            957             SETB TICK_ADC
-04F4 85C630          958             MOV VALOR_ADC, ADCH
-04F7 D0D0            959             POP PSW
-04F9 D0E0            960             POP ACC
-04FB 32              961             RETI
-                     962     
-04FC                 963     TIMER_0_ISR:
-04FC C0E0            964             PUSH ACC
-04FE C0D0            965             PUSH PSW
-0500 052B            966             INC CONT_INTERRUPCIONES_T0
-0502 7192            967             ACALL ACTUALIZAR_CONT_TIMER_0
-0504 716A            968             ACALL ACTIVAR_TIMER_0
-0506 D0D0            969             POP PSW
-0508 D0E0            970             POP ACC
-050A 32              971             RETI
-                     972     
-                     973     ;==============================================FIN=========================================
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/18/2025 10:09:06 PAGE     8
+
+                     432     
+026F                 433     MQ_EVEN_8:
+026F E521            434             MOV A, EVENTO
+0271 23              435             RL A
+0272 900276          436             MOV DPTR, #LIST_EVEN_MQEV_8
+0275 73              437             JMP @A+DPTR
+0276                 438     LIST_EVEN_MQEV_8:
+0276 417A            439             AJMP ME8_EV_0 ; Evento 0
+0278 417B            440             AJMP ME8_EV_1
+027A                 441     ME8_EV_0:
+027A 22              442             RET
+027B                 443     ME8_EV_1:                       ; PUERTA ABIERTA
+027B 752677          444             MOV DISPLAY_0, #77H     ; A
+027E 752573          445             MOV DISPLAY_1, #73H     ; P
+0281 752002          446             MOV ESTADO, #02H
+0284 71FD            447             ACALL CARGAR_DISPLAY_0
+0286 71F4            448             ACALL CARGAR_DISPLAY_1  
+0288 22              449             RET
+                     450     
+                     451     ;==============================================GENERADORES DE EVENTOS======================
+                             =================================
+                     452     
+                     453     ;-------------------------------------------------------0----------------------------------
+                             -------------------------
+                     454     
+0289                 455     GEN_EV_0:
+                     456             ;CONDICIONES ESTADO 0
+0289 30B204          457             JNB P3.2, COMPROBAR_PUERTA      ;SI NO ESTA EL BOTON NI NOS MOLESTAMOS EN VER EL RE
+                             STO DE CONDICIONES 
+028C 752100          458             MOV EVENTO, #00H                ;ESTAMOS SEGURO EN ESTADO 0 SI NO ESTA P3.2
+028F 22              459             RET
+                     460     
+0290                 461     COMPROBAR_PUERTA:
+0290 209102          462             JB PUERTA_ABIERTA, GEN_EV_1_ES_0
+0293 419C            463             AJMP GEN_EV_2_ES_0
+                     464     
+0295                 465     GEN_EV_1_ES_0:
+0295 5387FE          466             ANL PCON, #0xFE                 ;QUITAMOS EL IDLE MODIFICANDO EL BIT 0 DEL PCON
+0298 752101          467             MOV EVENTO, #01H                ;EN EL CASO DE QUE SI ESTE LA PUERTA ABIERTA EVENTO
+                              1 ESTADO 0
+029B 22              468             RET
+                     469     
+029C                 470     GEN_EV_2_ES_0:
+029C 5387FE          471             ANL PCON, #0xFE                 ;QUITAMOS EL IDLE MODIFICANDO EL BIT 0 DEL PCON
+029F 752102          472             MOV EVENTO, #02H                ;EN EL CASO DE QUE SI ESTE LA PUERTA ABIERTA EVENTO
+                              2 ESTADO 0
+02A2 22              473             RET
+                     474     
+                     475     
+                     476     
+                     477     ;-------------------------------------------------------1----------------------------------
+                             --------------------------
+                     478     
+02A3                 479     GEN_EV_1:
+                     480             ;CONDICIONES ESTADO 1
+02A3 20B20A          481             JB P3.2, GEN_EV_1_ES_1
+02A6 20910B          482             JB PUERTA_ABIERTA, GEN_EV_2_ES_1
+                     483             ;ADC
+02A9 201918          484             JB TICK_ADC, HAY_SP
+02AC 752100          485             MOV EVENTO,#00H
+02AF 22              486             RET
+                     487     
+02B0                 488     GEN_EV_1_ES_1:
+02B0 752101          489             MOV EVENTO, #01H
+02B3 22              490             RET
+02B4                 491     GEN_EV_2_ES_1:
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/18/2025 10:09:06 PAGE     9
+
+02B4 752102          492             MOV EVENTO, #02H
+02B7 22              493             RET
+02B8                 494     GEN_EV_3_ES_1:
+02B8 C219            495             CLR TICK_ADC
+02BA 752103          496             MOV EVENTO, #03H
+02BD 22              497             RET
+02BE                 498     GEN_EV_4_ES_1:
+02BE C219            499             CLR TICK_ADC
+02C0 752104          500             MOV EVENTO, #04H
+02C3 22              501             RET
+                     502     
+02C4                 503     HAY_SP:
+02C4 E530            504             MOV A, VALOR_ADC
+02C6 94E6            505             SUBB A, #0xE6; <-  VALOR SP EQUIVALE A 4.5 VOLTIOS 230d 
+02C8 50EE            506             JNC GEN_EV_3_ES_1       ;SI EL RESULTADO ES NEGATIVO (HAY CARRY) VALOR SP > ADCH PE
+                             SO OK
+02CA 2094F1          507             JB BOTON_INICIO, GEN_EV_4_ES_1  ;SI NO SI ESTA INICIO PULSADO PASAMOS AL EVENTO 4
+02CD 22              508             RET
+                     509             
+                     510     ;------------------------------------------------------2-----------------------------------
+                             -------------------------
+                     511     
+02CE                 512     GEN_EV_2:
+                     513             ;CONDICIONES ESTADO 0
+02CE 309104          514             JNB PUERTA_ABIERTA,  GEN_EV_1_ES_2
+02D1 752100          515             MOV EVENTO, #00H
+02D4 22              516             RET
+                     517     
+02D5                 518     GEN_EV_1_ES_2:
+02D5 752101          519             MOV EVENTO, #01H
+02D8 22              520             RET
+                     521     
+                     522     
+                     523     ;--------------------------------------------------------3---------------------------------
+                             -------------------------
+                     524     
+02D9                 525     GEN_EV_3:
+                     526             ;CONDICIONES ESTADO 3
+02D9 209204          527             JB SENSOR_LLENADO, GEN_EV_1_ES_3
+02DC 752100          528             MOV EVENTO, #00H
+02DF 22              529             RET
+                     530     
+02E0                 531     GEN_EV_1_ES_3:
+02E0 752101          532             MOV EVENTO, #01H
+02E3 22              533             RET
+                     534     
+                     535     ;----------------------------------------------------------4-------------------------------
+                             -------------------------
+                     536     
+02E4                 537     GEN_EV_4:
+                     538             ;CONDICIONES ESTADO 44
+02E4 203804          539             JB TICK_1S, COMP_TICK_ADC
+02E7 752100          540             MOV EVENTO, #00H
+02EA 22              541             RET
+                     542     
+02EB                 543     COMP_TICK_ADC:
+02EB 201904          544             JB TICK_ADC, COMPROBAR_TEMP
+02EE 752100          545             MOV EVENTO, #00H
+02F1 22              546             RET
+                     547     
+02F2                 548     COMPROBAR_TEMP:
+02F2 20B106          549             JB P3.1, COMP_T3_T2_T1
+02F5 20B003          550             JB P3.0, COMP_T3_T2_T1
+02F8 610A            551             AJMP GEN_EV_2_ES_4                      ;SI TEMP1 - 0 Y TEMP0 - 0 ENTONCES T0 Y COM
+                             O ESTE ESTA OK
+02FA 22              552             RET
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/18/2025 10:09:06 PAGE    10
+
+                     553     
+02FB                 554             COMP_T3_T2_T1:                          ;SOLO SET TEMP_SEL SI T1,T2,T3 YA QUE T0 US
+                             A AGUA TAL CUAL
+02FB E530            555                     MOV A, VALOR_ADC
+02FD 952A            556                     SUBB A, TEMP_SEL                ; SUSTITUIR EL VALOR DE 00H POR TEMP MINA A
+                             LCANZAR
+02FF 4003            557                     JC GEN_EV_1_ES_4
+0301 610A            558                     AJMP GEN_EV_2_ES_4
+0303 22              559                     RET
+                     560     
+                     561     
+                     562     
+0304                 563     GEN_EV_1_ES_4:                          ; NO CALIENTE
+0304 C238            564             CLR TICK_1S
+0306 752101          565             MOV EVENTO, #01H
+0309 22              566             RET
+                     567     
+030A                 568     GEN_EV_2_ES_4:                          ; SI CALIENTE
+030A C238            569             CLR TICK_1S
+030C 752102          570             MOV EVENTO, #02H
+030F 22              571             RET
+                     572     ;------------------------------------------------------------------------------------------
+                             ------------------------
+                     573     
+0310                 574     GEN_EV_5:
+                     575             ;CONDICIONES ESTADO 0
+0310 203B16          576             JB TICK_50MIN, GEN_EV_3_ES_5
+0313 203A0D          577             JB TICK_1MIN, GEN_EV_2_ES_5
+0316 203904          578             JB TICK_15S, GEN_EV_1_ES_5
+0319 752100          579             MOV EVENTO, #00H
+031C 22              580             RET
+                     581     
+031D                 582     GEN_EV_1_ES_5:  ;15 SEG
+031D C239            583             CLR TICK_15S
+031F 752101          584             MOV EVENTO,#01H
+0322 22              585             RET
+                     586     
+0323                 587     GEN_EV_2_ES_5:  ;1MIN
+0323 C23A            588             CLR TICK_1MIN
+0325 752102          589             MOV EVENTO,#02H
+0328 22              590             RET
+                     591     
+0329                 592     GEN_EV_3_ES_5:  ;50MIN
+0329 C23B            593             CLR TICK_50MIN
+032B 752103          594             MOV EVENTO,#03H
+032E 22              595             RET
+                     596     
+                     597     ;------------------------------------------------------------------------------------------
+                             ------------------------
+                     598     
+032F                 599     GEN_EV_6:
+                     600             ;CONDICIONES ESTADO 0
+032F 209304          601             JB SENSOR_VACIADO, GEN_EV_1_ES_6
+0332 752100          602             MOV EVENTO, #00H
+0335 22              603             RET
+                     604     
+0336                 605     GEN_EV_1_ES_6:
+0336 752101          606             MOV EVENTO, #01H
+0339 22              607             RET
+                     608     ;------------------------------------------------------------------------------------------
+                             ------------------------
+                     609     
+033A                 610     GEN_EV_7:
+                     611             ;CONDICIONES ESTADO 7
+033A 203C07          612             JB TICK_10MIN, GEN_EV_1_ES_7
+033D 203A0A          613             JB TICK_1MIN, GEN_EV_2_ES_7
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/18/2025 10:09:06 PAGE    11
+
+0340 752100          614             MOV EVENTO, #00H
+0343 22              615             RET
+                     616     
+0344                 617     GEN_EV_1_ES_7:
+0344 C23C            618             CLR TICK_10MIN
+0346 752101          619             MOV EVENTO, #01H
+0349 22              620             RET
+                     621     
+034A                 622     GEN_EV_2_ES_7:
+034A C23A            623             CLR TICK_1MIN
+034C 752102          624             MOV EVENTO, #02H
+034F 22              625             RET
+                     626     ;------------------------------------------------------------------------------------------
+                             ------------------------
+                     627     
+0350                 628     GEN_EV_8:
+                     629             ;CONDICIONES ESTADO 0
+0350 209104          630             JB PUERTA_ABIERTA, GEN_EV_1_ES_8
+0353 752100          631             MOV EVENTO, #00H
+0356 22              632             RET
+                     633     
+0357                 634     GEN_EV_1_ES_8:
+0357 752101          635             MOV EVENTO, #01H
+035A 22              636             RET
+                     637     
+                     638     ;------------------------------------------------------------------------------------------
+                             ------------------------
+                     639     ;================================================ACCIONES==================================
+                             =====================
+                     640     
+035B                 641     ACTIVAR_ADC_PESO:                       ;SELECCIONAMOS EL CANAL 0 PARA PESO
+035B 53C5E8          642             ANL ADCON,#0xE8
+035E 43C508          643             ORL ADCON,#0x08
+0361 22              644             RET
+                     645     
+0362                 646     ACTIVAR_ADC_TEMP:                       ;SELECCIONAMOS EL CANAL 1 PARA TEMP
+0362 53C5E6          647             ANL ADCON, #0xE6
+0365 43C509          648             ORL ADCON, #0x09
+0368 22              649             RET
+0369                 650     APAGAR_ADC:
+0369 C2AE            651             CLR IE.6
+036B 53C5E0          652             ANL ADCON, #0xE0
+036E 22              653             RET
+                     654     
+                     655     
+036F                 656     ACTIVAR_TIMER_0:
+036F 303D03          657             JNB PRIMERA_VUELTA, ACTIVAR_TIMER_0_PRIMERA_VUELTA
+0372 6187            658             AJMP ACTIVAR_TIMER_0_FULL
+0374 22              659             RET
+                     660     
+0375                 661     ACTIVAR_TIMER_0_PRIMERA_VUELTA:
+0375 758901          662             MOV TMOD, #0x01
+0378 758C7B          663             MOV TH0, #0x7B
+037B 758A80          664             MOV TL0, #0x80
+037E D2AF            665             SETB IE.7
+0380 D2A9            666             SETB IE.1
+0382 D23D            667             SETB PRIMERA_VUELTA
+0384 D28C            668             SETB TR0
+0386 22              669             RET
+                     670     
+0387                 671     ACTIVAR_TIMER_0_FULL:
+0387 758901          672             MOV TMOD, #0x01
+038A 758C00          673             MOV TH0, #0x00
+038D 758A00          674             MOV TL0, #0x00
+0390 D2AF            675             SETB IE.7
+0392 D2A9            676             SETB IE.1
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/18/2025 10:09:06 PAGE    12
+
+0394 D28C            677             SETB TR0
+0396 22              678             RET
+                     679     
+0397                 680     ACTUALIZAR_CONT_TIMER_0:
+                     681             
+0397 E52B            682             MOV A, CONT_INTERRUPCIONES_T0
+0399 941F            683             SUBB A, #0x1F
+039B 6019            684             JZ PASAN_1SEG
+                     685     
+039D E52C            686             MOV A, CONT_1S
+039F 940E            687             SUBB A, #0x0E
+03A1 601F            688             JZ PASAN_15SEG
+                     689             
+03A3 E52D            690             MOV A, CONT_15S
+03A5 9403            691             SUBB A, #0x03
+03A7 6023            692             JZ PASAN_1MIN
+                     693     
+03A9 E52E            694             MOV A, CONT_1MIN
+03AB 9409            695             SUBB A, #0x09
+03AD 6027            696             JZ PASAN_10MIN
+                     697             
+03AF E52F            698             MOV A, CONT_10MIN
+03B1 9404            699             SUBB A, #0x04
+03B3 602B            700             JZ PASAN_50MIN
+                     701             
+                     702             
+03B5 22              703             RET                                             ;escapar del act tiempos
+                     704             
+03B6                 705             PASAN_1SEG:
+03B6 052C            706                     INC CONT_1S
+03B8 752B00          707                     MOV CONT_INTERRUPCIONES_T0, #00H
+03BB C23D            708                     CLR PRIMERA_VUELTA                      ;CUANDO SE VUELVA A ACTIVAR T0 LO H
+                             ARA DE FORMA
+03BD D238            709                     SETB TICK_1S
+03BF 6197            710                     AJMP ACTUALIZAR_CONT_TIMER_0
+03C1 22              711                     RET
+03C2                 712             PASAN_15SEG:
+03C2 052D            713                     INC CONT_15S
+03C4 752C00          714                     MOV CONT_1S, #00H
+03C7 D239            715                     SETB TICK_15S
+03C9 6197            716                     AJMP ACTUALIZAR_CONT_TIMER_0
+03CB 22              717                     RET
+03CC                 718             PASAN_1MIN:
+03CC 052E            719                     INC CONT_1MIN
+03CE 752D00          720                     MOV CONT_15S, #00H
+03D1 D23A            721                     SETB TICK_1MIN
+03D3 6197            722                     AJMP ACTUALIZAR_CONT_TIMER_0
+03D5 22              723                     RET
+03D6                 724             PASAN_10MIN:
+03D6 052F            725                     INC CONT_10MIN
+03D8 752E00          726                     MOV CONT_1MIN, #00H
+03DB D23C            727                     SETB TICK_10MIN
+03DD 6197            728                     AJMP ACTUALIZAR_CONT_TIMER_0
+03DF 22              729                     RET
+03E0                 730             PASAN_50MIN:
+03E0 D23B            731                     SETB TICK_50MIN
+03E2 752F00          732                     MOV CONT_10MIN, #00H
+03E5 22              733                     RET
+                     734     
+                     735     
+                     736     
+                     737             ;SI CONT_INT_TO = 31 ENTONCES tick_1s
+                     738             ;si tick_1s inc cont 1s
+                     739             ;si cont1_1s = 15 ENTONCES tick_15s
+                     740             ;si tick 15s inc cont_15s
+                     741             ;si cont_15s = 4 entonces tick_1min
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/18/2025 10:09:06 PAGE    13
+
+                     742             ;si tick_1min inc cont_1min
+                     743             ;si cont_1min = 10 ENTONCES tick_10min
+                     744             ;si tick_10min inc cont_10min
+                     745             ;si cont_10min = 5 ENTONCES tick_50min
+                     746     
+                     747     
+03E6 22              748             RET
+03E7                 749     APAGAR_TIMER:
+03E7 22              750             RET
+                     751     
+03E8                 752     ACTIVAR_PWM0_60RPM:
+03E8 75FC1A          753             MOV PWM0, #0x1A
+03EB 22              754             RET
+                     755     
+03EC                 756     ACTIVAR_PWM0_600RPM:
+03EC 75FCE6          757             MOV PWM0, #0xE6
+03EF 22              758             RET
+                     759     
+03F0                 760     APAGAR_PWM0:
+03F0 8500FC          761             MOV PWM0, 0x00
+03F3 22              762             RET
+                     763     
+03F4                 764     CARGAR_DISPLAY_1:
+03F4 7480            765             MOV A, #0x80
+03F6 5280            766             ANL P0, A               ; 1000 0000 -> nos settea todo a 0 menos el .7
+03F8 E525            767             MOV A, DISPLAY_1
+03FA 4280            768             ORL P0, A               ; dsp1 siempre tiene un 0 en .7 por ello no modifica p0.7
+03FC 22              769             RET
+                     770     
+03FD                 771     CARGAR_DISPLAY_0:
+03FD 7480            772             MOV A, #0x80
+03FF 52A0            773             ANL P2, A               ; 1000 0000 -> nos settea todo a 0 menos el .7
+0401 E526            774             MOV A, DISPLAY_0
+0403 42A0            775             ORL P2, A               ; dsp1 siempre tiene un 0 en .7 por ello no modifica p0.7
+0405 22              776             RET
+                     777     
+                     778     
+0406                 779     SET_TEMP_SELECT:
+0406 20B103          780             JB P3.1, SET_T_ALTAS
+0409 8112            781             AJMP SET_T_BAJAS
+040B 22              782             RET
+                     783             
+040C                 784             SET_T_ALTAS:
+040C 20B007          785                     JB P3.0, SET_T_T3
+040F 811A            786                     AJMP SET_T_T2
+0411 22              787                     RET
+0412                 788             SET_T_BAJAS:
+0412 20B009          789                     JB P3.0, SET_T_T1
+0415 22              790                     RET
+                     791     
+0416                 792                     SET_T_T3:
+0416 752ACD          793                             MOV TEMP_SEL, #0xCD
+0419 22              794                             RET
+041A                 795                     SET_T_T2:
+041A 752A9A          796                             MOV TEMP_SEL, #0x9A
+041D 22              797                             RET
+041E                 798                     SET_T_T1:
+041E 752A66          799                             MOV TEMP_SEL, #0x66
+0421 22              800                             RET
+                     801             
+0422                 802     CARGAR_TEMP_DSP_0:
+0422 30B103          803             JNB BIT1_TEMP, COMPROBAR_B0T_B1_0
+0425 812E            804             AJMP COMPROBAR_B0T_B1_1
+0427 22              805             RET
+                     806     
+0428                 807             COMPROBAR_B0T_B1_0:
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/18/2025 10:09:06 PAGE    14
+
+0428 20B00D          808                     JB BIT0_TEMP, PINTAR_D0_T1
+042B 8134            809                     AJMP PINTAR_D0_T0
+042D 22              810                     RET
+042E                 811             COMPROBAR_B0T_B1_1:
+042E 20B00F          812                     JB BIT0_TEMP, PINTAR_D0_T3
+0431 813C            813                     AJMP PINTAR_D0_T2
+0433 22              814                     RET
+                     815             
+0434                 816             PINTAR_D0_T0:
+0434 75263F          817                     MOV DISPLAY_0, #0x3F    ;0
+0437 22              818                     RET
+0438                 819             PINTAR_D0_T1:
+0438 752606          820                     MOV DISPLAY_0, #0x06    ;1
+043B 22              821                     RET
+043C                 822             PINTAR_D0_T2:
+043C 75265B          823                     MOV DISPLAY_0, #0x5B    ;2
+043F 22              824                     RET
+0440                 825             PINTAR_D0_T3:
+0440 75264F          826                     MOV DISPLAY_0, #0x4F    ;3
+0443 22              827                     RET
+                     828     
+0444                 829     MAPEAR_TIEMPO_D1_D0:                    ;guardamos los valores de t restante por decenas y 
+                             unidades en dos dir.
+0444 E522            830             MOV A,TIEMPO_RESTANTE_MINS
+0446 75F00A          831             MOV B, #0AH
+0449 84              832             DIV AB                          ; APROVECHAMOS QUE ADCH/10 COCIENTE -> A (decenas) 
+                             Y RESTO -> B (unidades)
+044A F528            833             MOV DECENAS, A
+044C 85F029          834             MOV UNIDADES, B
+                     835             
+044F 9154            836             ACALL MAP_DEC_D1
+0451 9197            837             ACALL MAP_UNI_D0
+                     838     
+0453 22              839             RET
+                     840     
+0454                 841             MAP_DEC_D1:
+0454 E528            842                     MOV A, DECENAS
+0456 23              843                     RL A
+0457 90045B          844                     MOV DPTR, #LISTA_DECENAS
+045A 73              845                     JMP @A+DPTR
+045B                 846             LISTA_DECENAS:
+045B 816F            847                     AJMP CD0
+045D 8173            848                     AJMP CD1
+045F 8177            849                     AJMP CD2
+0461 817B            850                     AJMP CD3
+0463 817F            851                     AJMP CD4
+0465 8183            852                     AJMP CD5
+0467 8187            853                     AJMP CD6
+0469 818B            854                     AJMP CD7
+046B 818F            855                     AJMP CD8
+046D 8193            856                     AJMP CD9
+                     857             
+046F                 858             CD0:
+046F 75253F          859                     MOV DISPLAY_1, #0x3F
+0472 22              860                     RET
+0473                 861             CD1:
+0473 752506          862                     MOV DISPLAY_1, #0x06
+0476 22              863                     RET
+0477                 864             CD2:
+0477 75255B          865                     MOV DISPLAY_1, #0x5B
+047A 22              866                     RET
+047B                 867             CD3:
+047B 75254F          868                     MOV DISPLAY_1, #0x4F
+047E 22              869                     RET
+047F                 870             CD4:
+047F 752566          871                     MOV DISPLAY_1, #0x66
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/18/2025 10:09:06 PAGE    15
+
+0482 22              872                     RET
+0483                 873             CD5:
+0483 75256D          874                     MOV DISPLAY_1, #0x6D
+0486 22              875                     RET
+0487                 876             CD6:
+0487 75257D          877                     MOV DISPLAY_1, #0x7D
+048A 22              878                     RET
+048B                 879             CD7:
+048B 752507          880                     MOV DISPLAY_1, #0x07
+048E 22              881                     RET
+048F                 882             CD8:
+048F 75257F          883                     MOV DISPLAY_1, #0x7F
+0492 22              884                     RET
+0493                 885             CD9:
+0493 75256F          886                     MOV DISPLAY_1, #0x6F
+0496 22              887                     RET
+                     888     
+0497                 889             MAP_UNI_D0:
+0497 E529            890                     MOV A, UNIDADES
+0499 23              891                     RL A
+049A 90049E          892                     MOV DPTR, #LISTA_UNIDADES
+049D 73              893                     JMP @A+DPTR
+049E                 894             LISTA_UNIDADES:
+049E 81B2            895                     AJMP CU0
+04A0 81B6            896                     AJMP CU1
+04A2 81BA            897                     AJMP CU2
+04A4 81BE            898                     AJMP CU3
+04A6 81C2            899                     AJMP CU4
+04A8 81C6            900                     AJMP CU5
+04AA 81CA            901                     AJMP CU6
+04AC 81CE            902                     AJMP CU7
+04AE 81D2            903                     AJMP CU8
+04B0 81D6            904                     AJMP CU9
+                     905             
+04B2                 906             CU0:
+04B2 75263F          907                     MOV DISPLAY_0, #0x3F
+04B5 22              908                     RET
+04B6                 909             CU1:
+04B6 752606          910                     MOV DISPLAY_0, #0x06
+04B9 22              911                     RET
+04BA                 912             CU2:
+04BA 75265B          913                     MOV DISPLAY_0, #0x5B
+04BD 22              914                     RET
+04BE                 915             CU3:
+04BE 75264F          916                     MOV DISPLAY_0, #0x4F
+04C1 22              917                     RET
+04C2                 918             CU4:
+04C2 752666          919                     MOV DISPLAY_0, #0x66
+04C5 22              920                     RET
+04C6                 921             CU5:
+04C6 75266D          922                     MOV DISPLAY_0, #0x6D
+04C9 22              923                     RET
+04CA                 924             CU6:
+04CA 75267D          925                     MOV DISPLAY_0, #0x7D
+04CD 22              926                     RET
+04CE                 927             CU7:
+04CE 752607          928                     MOV DISPLAY_0, #0x07
+04D1 22              929                     RET
+04D2                 930             CU8:
+04D2 75267F          931                     MOV DISPLAY_0, #0x7F
+04D5 22              932                     RET
+04D6                 933             CU9:
+04D6 75266F          934                     MOV DISPLAY_0, #0x6F
+04D9 22              935                     RET
+                     936     
+04DA                 937     CAMBIAR_SENTIDO_GIRO:
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/18/2025 10:09:06 PAGE    16
+
+04DA 20A703          938             JB SENTIDO_GIRO_MOTOR, FALSE_SG                 ;SI SENT 1 -> VAMOS A SET0
+04DD 81E3            939             AJMP TRUE_SG                                    ;SI SENT 0 -> SET1
+04DF 22              940             RET
+04E0                 941             FALSE_SG:
+04E0 C2A7            942                     CLR SENTIDO_GIRO_MOTOR
+04E2 22              943                     RET
+04E3                 944             TRUE_SG:
+04E3 D2A7            945                     SETB SENTIDO_GIRO_MOTOR
+04E5 22              946                     RET
+                     947     ;==============================================INTERRUPCIONES==============================
+                             =========================
+                     948     
+04E6                 949     INT0_ISR:
+04E6 C0E0            950             PUSH ACC
+04E8 C0D0            951             PUSH PSW
+04EA D218            952             SETB TICK_INT_0
+04EC C2A8            953             CLR IE.0
+04EE D0D0            954             POP PSW
+04F0 D0E0            955             POP ACC
+04F2 32              956             RETI
+                     957     
+04F3                 958     ADC_ISR:
+04F3 C0E0            959             PUSH ACC
+04F5 C0D0            960             PUSH PSW
+04F7 D219            961             SETB TICK_ADC
+04F9 85C630          962             MOV VALOR_ADC, ADCH
+04FC D0D0            963             POP PSW
+04FE D0E0            964             POP ACC
+0500 32              965             RETI
+                     966     
+0501                 967     TIMER_0_ISR:
+0501 C0E0            968             PUSH ACC
+0503 C0D0            969             PUSH PSW
+0505 052B            970             INC CONT_INTERRUPCIONES_T0
+0507 7197            971             ACALL ACTUALIZAR_CONT_TIMER_0
+0509 716F            972             ACALL ACTIVAR_TIMER_0
+050B D0D0            973             POP PSW
+050D D0E0            974             POP ACC
+050F 32              975             RETI
+                     976     
+                     977     ;==============================================FIN=========================================
                              =============
-                     974     
-                     975     END
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/13/2025 15:07:10 PAGE    17
+                     978     
+                     979     END
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/18/2025 10:09:06 PAGE    17
 
 SYMBOL TABLE LISTING
 ------ ----- -------
@@ -1068,66 +1072,66 @@ SYMBOL TABLE LISTING
 N A M E                         T Y P E  V A L U E   ATTRIBUTES
 
 ACC. . . . . . . . . . . . . .  D ADDR   00E0H   A   
-ACTIVAR_ADC_PESO . . . . . . .  C ADDR   0356H   A   
-ACTIVAR_ADC_TEMP . . . . . . .  C ADDR   035DH   A   
-ACTIVAR_PWM0_600RPM. . . . . .  C ADDR   03E7H   A   
-ACTIVAR_PWM0_60RPM . . . . . .  C ADDR   03E3H   A   
-ACTIVAR_TIMER_0. . . . . . . .  C ADDR   036AH   A   
-ACTIVAR_TIMER_0_FULL . . . . .  C ADDR   0382H   A   
-ACTIVAR_TIMER_0_PRIMERA_VUELTA  C ADDR   0370H   A   
-ACTUALIZAR_CONT_TIMER_0. . . .  C ADDR   0392H   A   
+ACTIVAR_ADC_PESO . . . . . . .  C ADDR   035BH   A   
+ACTIVAR_ADC_TEMP . . . . . . .  C ADDR   0362H   A   
+ACTIVAR_PWM0_600RPM. . . . . .  C ADDR   03ECH   A   
+ACTIVAR_PWM0_60RPM . . . . . .  C ADDR   03E8H   A   
+ACTIVAR_TIMER_0. . . . . . . .  C ADDR   036FH   A   
+ACTIVAR_TIMER_0_FULL . . . . .  C ADDR   0387H   A   
+ACTIVAR_TIMER_0_PRIMERA_VUELTA  C ADDR   0375H   A   
+ACTUALIZAR_CONT_TIMER_0. . . .  C ADDR   0397H   A   
 ADCH . . . . . . . . . . . . .  N NUMB   00C6H   A   
 ADCON. . . . . . . . . . . . .  N NUMB   00C5H   A   
-ADC_ISR. . . . . . . . . . . .  C ADDR   04EEH   A   
-APAGAR_ADC . . . . . . . . . .  C ADDR   0364H   A   
-APAGAR_PWM0. . . . . . . . . .  C ADDR   03EBH   A   
-APAGAR_TIMER . . . . . . . . .  C ADDR   03E2H   A   
+ADC_ISR. . . . . . . . . . . .  C ADDR   04F3H   A   
+APAGAR_ADC . . . . . . . . . .  C ADDR   0369H   A   
+APAGAR_PWM0. . . . . . . . . .  C ADDR   03F0H   A   
+APAGAR_TIMER . . . . . . . . .  C ADDR   03E7H   A   
 B. . . . . . . . . . . . . . .  D ADDR   00F0H   A   
 BIT0_TEMP. . . . . . . . . . .  B ADDR   00B0H.0 A   
 BIT1_TEMP. . . . . . . . . . .  B ADDR   00B0H.1 A   
 BLOQUEO_PUERTA . . . . . . . .  B ADDR   0080H.7 A   
 BOTON_INICIO . . . . . . . . .  B ADDR   0090H.4 A   
 CALENTADOR_AGUA. . . . . . . .  B ADDR   00B0H.6 A   
-CAMBIAR_SENTIDO_GIRO . . . . .  C ADDR   04D5H   A   
-CARGAR_DISPLAY_0 . . . . . . .  C ADDR   03F8H   A   
-CARGAR_DISPLAY_1 . . . . . . .  C ADDR   03EFH   A   
-CARGAR_TEMP_DSP_0. . . . . . .  C ADDR   041DH   A   
-CD0. . . . . . . . . . . . . .  C ADDR   046AH   A   
-CD1. . . . . . . . . . . . . .  C ADDR   046EH   A   
-CD2. . . . . . . . . . . . . .  C ADDR   0472H   A   
-CD3. . . . . . . . . . . . . .  C ADDR   0476H   A   
-CD4. . . . . . . . . . . . . .  C ADDR   047AH   A   
-CD5. . . . . . . . . . . . . .  C ADDR   047EH   A   
-CD6. . . . . . . . . . . . . .  C ADDR   0482H   A   
-CD7. . . . . . . . . . . . . .  C ADDR   0486H   A   
-CD8. . . . . . . . . . . . . .  C ADDR   048AH   A   
-CD9. . . . . . . . . . . . . .  C ADDR   048EH   A   
-COMPROBAR_B0T_B1_0 . . . . . .  C ADDR   0423H   A   
-COMPROBAR_B0T_B1_1 . . . . . .  C ADDR   0429H   A   
-COMPROBAR_PUERTA . . . . . . .  C ADDR   028BH   A   
-COMPROBAR_TEMP . . . . . . . .  C ADDR   02EDH   A   
-COMP_T3_T2_T1. . . . . . . . .  C ADDR   02F6H   A   
-COMP_TICK_ADC. . . . . . . . .  C ADDR   02E6H   A   
+CAMBIAR_SENTIDO_GIRO . . . . .  C ADDR   04DAH   A   
+CARGAR_DISPLAY_0 . . . . . . .  C ADDR   03FDH   A   
+CARGAR_DISPLAY_1 . . . . . . .  C ADDR   03F4H   A   
+CARGAR_TEMP_DSP_0. . . . . . .  C ADDR   0422H   A   
+CD0. . . . . . . . . . . . . .  C ADDR   046FH   A   
+CD1. . . . . . . . . . . . . .  C ADDR   0473H   A   
+CD2. . . . . . . . . . . . . .  C ADDR   0477H   A   
+CD3. . . . . . . . . . . . . .  C ADDR   047BH   A   
+CD4. . . . . . . . . . . . . .  C ADDR   047FH   A   
+CD5. . . . . . . . . . . . . .  C ADDR   0483H   A   
+CD6. . . . . . . . . . . . . .  C ADDR   0487H   A   
+CD7. . . . . . . . . . . . . .  C ADDR   048BH   A   
+CD8. . . . . . . . . . . . . .  C ADDR   048FH   A   
+CD9. . . . . . . . . . . . . .  C ADDR   0493H   A   
+COMPROBAR_B0T_B1_0 . . . . . .  C ADDR   0428H   A   
+COMPROBAR_B0T_B1_1 . . . . . .  C ADDR   042EH   A   
+COMPROBAR_PUERTA . . . . . . .  C ADDR   0290H   A   
+COMPROBAR_TEMP . . . . . . . .  C ADDR   02F2H   A   
+COMP_T3_T2_T1. . . . . . . . .  C ADDR   02FBH   A   
+COMP_TICK_ADC. . . . . . . . .  C ADDR   02EBH   A   
 CONT_10MIN . . . . . . . . . .  N NUMB   002FH   A   
 CONT_15S . . . . . . . . . . .  N NUMB   002DH   A   
 CONT_1MIN. . . . . . . . . . .  N NUMB   002EH   A   
 CONT_1S. . . . . . . . . . . .  N NUMB   002CH   A   
 CONT_INTERRUPCIONES_T0 . . . .  N NUMB   002BH   A   
-CU0. . . . . . . . . . . . . .  C ADDR   04ADH   A   
-CU1. . . . . . . . . . . . . .  C ADDR   04B1H   A   
-CU2. . . . . . . . . . . . . .  C ADDR   04B5H   A   
-CU3. . . . . . . . . . . . . .  C ADDR   04B9H   A   
-CU4. . . . . . . . . . . . . .  C ADDR   04BDH   A   
-CU5. . . . . . . . . . . . . .  C ADDR   04C1H   A   
-CU6. . . . . . . . . . . . . .  C ADDR   04C5H   A   
-CU7. . . . . . . . . . . . . .  C ADDR   04C9H   A   
-CU8. . . . . . . . . . . . . .  C ADDR   04CDH   A   
-CU9. . . . . . . . . . . . . .  C ADDR   04D1H   A   
+CU0. . . . . . . . . . . . . .  C ADDR   04B2H   A   
+CU1. . . . . . . . . . . . . .  C ADDR   04B6H   A   
+CU2. . . . . . . . . . . . . .  C ADDR   04BAH   A   
+CU3. . . . . . . . . . . . . .  C ADDR   04BEH   A   
+CU4. . . . . . . . . . . . . .  C ADDR   04C2H   A   
+CU5. . . . . . . . . . . . . .  C ADDR   04C6H   A   
+CU6. . . . . . . . . . . . . .  C ADDR   04CAH   A   
+CU7. . . . . . . . . . . . . .  C ADDR   04CEH   A   
+CU8. . . . . . . . . . . . . .  C ADDR   04D2H   A   
+CU9. . . . . . . . . . . . . .  C ADDR   04D6H   A   
 DECENAS. . . . . . . . . . . .  N NUMB   0028H   A   
 DISPLAY_0. . . . . . . . . . .  N NUMB   0026H   A   
 DISPLAY_1. . . . . . . . . . .  N NUMB   0025H   A   
 ESTADO . . . . . . . . . . . .  N NUMB   0020H   A   
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/13/2025 15:07:10 PAGE    18
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/18/2025 10:09:06 PAGE    18
 
 ESTADO_0 . . . . . . . . . . .  C ADDR   00FFH   A   
 ESTADO_1 . . . . . . . . . . .  C ADDR   0104H   A   
@@ -1139,54 +1143,54 @@ ESTADO_6 . . . . . . . . . . .  C ADDR   011DH   A
 ESTADO_7 . . . . . . . . . . .  C ADDR   0122H   A   
 ESTADO_8 . . . . . . . . . . .  C ADDR   0127H   A   
 EVENTO . . . . . . . . . . . .  N NUMB   0021H   A   
-FALSE_SG . . . . . . . . . . .  C ADDR   04DBH   A   
-GEN_EV_0 . . . . . . . . . . .  C ADDR   0284H   A   
-GEN_EV_1 . . . . . . . . . . .  C ADDR   029EH   A   
-GEN_EV_1_ES_0. . . . . . . . .  C ADDR   0290H   A   
-GEN_EV_1_ES_1. . . . . . . . .  C ADDR   02ABH   A   
-GEN_EV_1_ES_2. . . . . . . . .  C ADDR   02D0H   A   
-GEN_EV_1_ES_3. . . . . . . . .  C ADDR   02DBH   A   
-GEN_EV_1_ES_4. . . . . . . . .  C ADDR   02FFH   A   
-GEN_EV_1_ES_5. . . . . . . . .  C ADDR   0318H   A   
-GEN_EV_1_ES_6. . . . . . . . .  C ADDR   0331H   A   
-GEN_EV_1_ES_7. . . . . . . . .  C ADDR   033FH   A   
-GEN_EV_1_ES_8. . . . . . . . .  C ADDR   0352H   A   
-GEN_EV_2 . . . . . . . . . . .  C ADDR   02C9H   A   
-GEN_EV_2_ES_0. . . . . . . . .  C ADDR   0297H   A   
-GEN_EV_2_ES_1. . . . . . . . .  C ADDR   02AFH   A   
-GEN_EV_2_ES_4. . . . . . . . .  C ADDR   0305H   A   
-GEN_EV_2_ES_5. . . . . . . . .  C ADDR   031EH   A   
-GEN_EV_2_ES_7. . . . . . . . .  C ADDR   0345H   A   
-GEN_EV_3 . . . . . . . . . . .  C ADDR   02D4H   A   
-GEN_EV_3_ES_1. . . . . . . . .  C ADDR   02B3H   A   
-GEN_EV_3_ES_5. . . . . . . . .  C ADDR   0324H   A   
-GEN_EV_4 . . . . . . . . . . .  C ADDR   02DFH   A   
-GEN_EV_4_ES_1. . . . . . . . .  C ADDR   02B9H   A   
-GEN_EV_5 . . . . . . . . . . .  C ADDR   030BH   A   
-GEN_EV_6 . . . . . . . . . . .  C ADDR   032AH   A   
-GEN_EV_7 . . . . . . . . . . .  C ADDR   0335H   A   
-GEN_EV_8 . . . . . . . . . . .  C ADDR   034BH   A   
-HAY_SP . . . . . . . . . . . .  C ADDR   02BFH   A   
+FALSE_SG . . . . . . . . . . .  C ADDR   04E0H   A   
+GEN_EV_0 . . . . . . . . . . .  C ADDR   0289H   A   
+GEN_EV_1 . . . . . . . . . . .  C ADDR   02A3H   A   
+GEN_EV_1_ES_0. . . . . . . . .  C ADDR   0295H   A   
+GEN_EV_1_ES_1. . . . . . . . .  C ADDR   02B0H   A   
+GEN_EV_1_ES_2. . . . . . . . .  C ADDR   02D5H   A   
+GEN_EV_1_ES_3. . . . . . . . .  C ADDR   02E0H   A   
+GEN_EV_1_ES_4. . . . . . . . .  C ADDR   0304H   A   
+GEN_EV_1_ES_5. . . . . . . . .  C ADDR   031DH   A   
+GEN_EV_1_ES_6. . . . . . . . .  C ADDR   0336H   A   
+GEN_EV_1_ES_7. . . . . . . . .  C ADDR   0344H   A   
+GEN_EV_1_ES_8. . . . . . . . .  C ADDR   0357H   A   
+GEN_EV_2 . . . . . . . . . . .  C ADDR   02CEH   A   
+GEN_EV_2_ES_0. . . . . . . . .  C ADDR   029CH   A   
+GEN_EV_2_ES_1. . . . . . . . .  C ADDR   02B4H   A   
+GEN_EV_2_ES_4. . . . . . . . .  C ADDR   030AH   A   
+GEN_EV_2_ES_5. . . . . . . . .  C ADDR   0323H   A   
+GEN_EV_2_ES_7. . . . . . . . .  C ADDR   034AH   A   
+GEN_EV_3 . . . . . . . . . . .  C ADDR   02D9H   A   
+GEN_EV_3_ES_1. . . . . . . . .  C ADDR   02B8H   A   
+GEN_EV_3_ES_5. . . . . . . . .  C ADDR   0329H   A   
+GEN_EV_4 . . . . . . . . . . .  C ADDR   02E4H   A   
+GEN_EV_4_ES_1. . . . . . . . .  C ADDR   02BEH   A   
+GEN_EV_5 . . . . . . . . . . .  C ADDR   0310H   A   
+GEN_EV_6 . . . . . . . . . . .  C ADDR   032FH   A   
+GEN_EV_7 . . . . . . . . . . .  C ADDR   033AH   A   
+GEN_EV_8 . . . . . . . . . . .  C ADDR   0350H   A   
+HAY_SP . . . . . . . . . . . .  C ADDR   02C4H   A   
 IE . . . . . . . . . . . . . .  D ADDR   00A8H   A   
 INICIALIZACIONES . . . . . . .  C ADDR   009AH   A   
 INICIO . . . . . . . . . . . .  C ADDR   007BH   A   
-INT0_ISR . . . . . . . . . . .  C ADDR   04E1H   A   
-LISTA_DECENAS. . . . . . . . .  C ADDR   0456H   A   
+INT0_ISR . . . . . . . . . . .  C ADDR   04E6H   A   
+LISTA_DECENAS. . . . . . . . .  C ADDR   045BH   A   
 LISTA_EST. . . . . . . . . . .  C ADDR   0088H   A   
-LISTA_UNIDADES . . . . . . . .  C ADDR   0499H   A   
+LISTA_UNIDADES . . . . . . . .  C ADDR   049EH   A   
 LIST_EVEN_MQEV_0 . . . . . . .  C ADDR   0133H   A   
 LIST_EVEN_MQEV_1 . . . . . . .  C ADDR   0162H   A   
 LIST_EVEN_MQEV_2 . . . . . . .  C ADDR   01AAH   A   
 LIST_EVEN_MQEV_3 . . . . . . .  C ADDR   01C6H   A   
 LIST_EVEN_MQEV_4 . . . . . . .  C ADDR   01E2H   A   
 LIST_EVEN_MQEV_5 . . . . . . .  C ADDR   01FDH   A   
-LIST_EVEN_MQEV_6 . . . . . . .  C ADDR   0231H   A   
-LIST_EVEN_MQEV_7 . . . . . . .  C ADDR   024AH   A   
-LIST_EVEN_MQEV_8 . . . . . . .  C ADDR   0271H   A   
+LIST_EVEN_MQEV_6 . . . . . . .  C ADDR   0233H   A   
+LIST_EVEN_MQEV_7 . . . . . . .  C ADDR   024FH   A   
+LIST_EVEN_MQEV_8 . . . . . . .  C ADDR   0276H   A   
 MAIN . . . . . . . . . . . . .  C ADDR   007DH   A   
-MAPEAR_TIEMPO_D1_D0. . . . . .  C ADDR   043FH   A   
-MAP_DEC_D1 . . . . . . . . . .  C ADDR   044FH   A   
-MAP_UNI_D0 . . . . . . . . . .  C ADDR   0492H   A   
+MAPEAR_TIEMPO_D1_D0. . . . . .  C ADDR   0444H   A   
+MAP_DEC_D1 . . . . . . . . . .  C ADDR   0454H   A   
+MAP_UNI_D0 . . . . . . . . . .  C ADDR   0497H   A   
 MAQ_ESTADOS. . . . . . . . . .  C ADDR   0081H   A   
 ME0_EV_0 . . . . . . . . . . .  C ADDR   0139H   A   
 ME0_EV_1 . . . . . . . . . . .  C ADDR   013DH   A   
@@ -1195,7 +1199,7 @@ ME1_EV_0 . . . . . . . . . . .  C ADDR   016CH   A
 ME1_EV_1 . . . . . . . . . . .  C ADDR   016DH   A   
 ME1_EV_2 . . . . . . . . . . .  C ADDR   0175H   A   
 ME1_EV_3 . . . . . . . . . . .  C ADDR   0183H   A   
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/13/2025 15:07:10 PAGE    19
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/18/2025 10:09:06 PAGE    19
 
 ME1_EV_4 . . . . . . . . . . .  C ADDR   0190H   A   
 ME2_EV_0 . . . . . . . . . . .  C ADDR   01AEH   A   
@@ -1209,13 +1213,13 @@ ME5_EV_0 . . . . . . . . . . .  C ADDR   0205H   A
 ME5_EV_1 . . . . . . . . . . .  C ADDR   0206H   A   
 ME5_EV_2 . . . . . . . . . . .  C ADDR   0211H   A   
 ME5_EV_3 . . . . . . . . . . .  C ADDR   021CH   A   
-ME6_EV_0 . . . . . . . . . . .  C ADDR   0235H   A   
-ME6_EV_1 . . . . . . . . . . .  C ADDR   0236H   A   
-ME7_EV_0 . . . . . . . . . . .  C ADDR   0250H   A   
-ME7_EV_1 . . . . . . . . . . .  C ADDR   0251H   A   
-ME7_EV_2 . . . . . . . . . . .  C ADDR   0263H   A   
-ME8_EV_0 . . . . . . . . . . .  C ADDR   0275H   A   
-ME8_EV_1 . . . . . . . . . . .  C ADDR   0276H   A   
+ME6_EV_0 . . . . . . . . . . .  C ADDR   0237H   A   
+ME6_EV_1 . . . . . . . . . . .  C ADDR   0238H   A   
+ME7_EV_0 . . . . . . . . . . .  C ADDR   0255H   A   
+ME7_EV_1 . . . . . . . . . . .  C ADDR   0256H   A   
+ME7_EV_2 . . . . . . . . . . .  C ADDR   0268H   A   
+ME8_EV_0 . . . . . . . . . . .  C ADDR   027AH   A   
+ME8_EV_1 . . . . . . . . . . .  C ADDR   027BH   A   
 MOTOR_DESAGUE. . . . . . . . .  B ADDR   0090H.0 A   
 MQ_EVEN_0. . . . . . . . . . .  C ADDR   012CH   A   
 MQ_EVEN_1. . . . . . . . . . .  C ADDR   015BH   A   
@@ -1223,23 +1227,23 @@ MQ_EVEN_2. . . . . . . . . . .  C ADDR   01A3H   A
 MQ_EVEN_3. . . . . . . . . . .  C ADDR   01BFH   A   
 MQ_EVEN_4. . . . . . . . . . .  C ADDR   01DBH   A   
 MQ_EVEN_5. . . . . . . . . . .  C ADDR   01F6H   A   
-MQ_EVEN_6. . . . . . . . . . .  C ADDR   022AH   A   
-MQ_EVEN_7. . . . . . . . . . .  C ADDR   0243H   A   
-MQ_EVEN_8. . . . . . . . . . .  C ADDR   026AH   A   
+MQ_EVEN_6. . . . . . . . . . .  C ADDR   022CH   A   
+MQ_EVEN_7. . . . . . . . . . .  C ADDR   0248H   A   
+MQ_EVEN_8. . . . . . . . . . .  C ADDR   026FH   A   
 P0 . . . . . . . . . . . . . .  D ADDR   0080H   A   
 P1 . . . . . . . . . . . . . .  D ADDR   0090H   A   
 P2 . . . . . . . . . . . . . .  D ADDR   00A0H   A   
 P3 . . . . . . . . . . . . . .  D ADDR   00B0H   A   
-PASAN_10MIN. . . . . . . . . .  C ADDR   03D1H   A   
-PASAN_15SEG. . . . . . . . . .  C ADDR   03BDH   A   
-PASAN_1MIN . . . . . . . . . .  C ADDR   03C7H   A   
-PASAN_1SEG . . . . . . . . . .  C ADDR   03B1H   A   
-PASAN_50MIN. . . . . . . . . .  C ADDR   03DBH   A   
+PASAN_10MIN. . . . . . . . . .  C ADDR   03D6H   A   
+PASAN_15SEG. . . . . . . . . .  C ADDR   03C2H   A   
+PASAN_1MIN . . . . . . . . . .  C ADDR   03CCH   A   
+PASAN_1SEG . . . . . . . . . .  C ADDR   03B6H   A   
+PASAN_50MIN. . . . . . . . . .  C ADDR   03E0H   A   
 PCON . . . . . . . . . . . . .  D ADDR   0087H   A   
-PINTAR_D0_T0 . . . . . . . . .  C ADDR   042FH   A   
-PINTAR_D0_T1 . . . . . . . . .  C ADDR   0433H   A   
-PINTAR_D0_T2 . . . . . . . . .  C ADDR   0437H   A   
-PINTAR_D0_T3 . . . . . . . . .  C ADDR   043BH   A   
+PINTAR_D0_T0 . . . . . . . . .  C ADDR   0434H   A   
+PINTAR_D0_T1 . . . . . . . . .  C ADDR   0438H   A   
+PINTAR_D0_T2 . . . . . . . . .  C ADDR   043CH   A   
+PINTAR_D0_T3 . . . . . . . . .  C ADDR   0440H   A   
 PRIMERA_VUELTA . . . . . . . .  B ADDR   0027H.5 A   
 PSW. . . . . . . . . . . . . .  D ADDR   00D0H   A   
 PUERTA_ABIERTA . . . . . . . .  B ADDR   0090H.1 A   
@@ -1248,12 +1252,12 @@ PWMP . . . . . . . . . . . . .  N NUMB   00FEH   A
 SENSOR_LLENADO . . . . . . . .  B ADDR   0090H.2 A   
 SENSOR_VACIADO . . . . . . . .  B ADDR   0090H.3 A   
 SENTIDO_GIRO_MOTOR . . . . . .  B ADDR   00A0H.7 A   
-SET_TEMP_SELECT. . . . . . . .  C ADDR   0401H   A   
-SET_T_ALTAS. . . . . . . . . .  C ADDR   0407H   A   
-SET_T_BAJAS. . . . . . . . . .  C ADDR   040DH   A   
-SET_T_T1 . . . . . . . . . . .  C ADDR   0419H   A   
-SET_T_T2 . . . . . . . . . . .  C ADDR   0415H   A   
-SET_T_T3 . . . . . . . . . . .  C ADDR   0411H   A   
+SET_TEMP_SELECT. . . . . . . .  C ADDR   0406H   A   
+SET_T_ALTAS. . . . . . . . . .  C ADDR   040CH   A   
+SET_T_BAJAS. . . . . . . . . .  C ADDR   0412H   A   
+SET_T_T1 . . . . . . . . . . .  C ADDR   041EH   A   
+SET_T_T2 . . . . . . . . . . .  C ADDR   041AH   A   
+SET_T_T3 . . . . . . . . . . .  C ADDR   0416H   A   
 TEMP_SEL . . . . . . . . . . .  N NUMB   002AH   A   
 TH0. . . . . . . . . . . . . .  D ADDR   008CH   A   
 TICK_10MIN . . . . . . . . . .  B ADDR   0027H.4 A   
@@ -1263,15 +1267,15 @@ TICK_1S. . . . . . . . . . . .  B ADDR   0027H.0 A
 TICK_50MIN . . . . . . . . . .  B ADDR   0027H.3 A   
 TICK_ADC . . . . . . . . . . .  B ADDR   0023H.1 A   
 TICK_INT_0 . . . . . . . . . .  B ADDR   0023H.0 A   
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/13/2025 15:07:10 PAGE    20
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/18/2025 10:09:06 PAGE    20
 
 TICK_TIMER_0 . . . . . . . . .  B ADDR   0023H.3 A   
 TIEMPO_RESTANTE_MINS . . . . .  N NUMB   0022H   A   
-TIMER_0_ISR. . . . . . . . . .  C ADDR   04FCH   A   
+TIMER_0_ISR. . . . . . . . . .  C ADDR   0501H   A   
 TL0. . . . . . . . . . . . . .  D ADDR   008AH   A   
 TMOD . . . . . . . . . . . . .  D ADDR   0089H   A   
 TR0. . . . . . . . . . . . . .  B ADDR   0088H.4 A   
-TRUE_SG. . . . . . . . . . . .  C ADDR   04DEH   A   
+TRUE_SG. . . . . . . . . . . .  C ADDR   04E3H   A   
 UNIDADES . . . . . . . . . . .  N NUMB   0029H   A   
 VALOR_ADC. . . . . . . . . . .  N NUMB   0030H   A   
 VALV_ENTRADA_AGUA. . . . . . .  B ADDR   00B0H.3 A   
