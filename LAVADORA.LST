@@ -1,4 +1,4 @@
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 11:06:06 PAGE     1
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 17:12:50 PAGE     1
 
 
 MACRO ASSEMBLER A51 V6.14
@@ -65,7 +65,7 @@ LOC  OBJ            LINE     SOURCE
                       55     
                       56     ;======================================INCIO===============================================
                              =
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 11:06:06 PAGE     2
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 17:12:50 PAGE     2
 
                       57     
 0000                  58     ORG 0x0000
@@ -133,7 +133,7 @@ LOC  OBJ            LINE     SOURCE
 00C8 D292            117             SETB P1.2
 00CA D293            118             SETB P1.3
 00CC D294            119             SETB P1.4
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 11:06:06 PAGE     3
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 17:12:50 PAGE     3
 
 00CE D2B0            120             SETB P3.0
 00D0 D2B1            121             SETB P3.1
@@ -201,7 +201,7 @@ LOC  OBJ            LINE     SOURCE
                      180     
 0113                 181     ESTADO_8:
 0113 7177            182             ACALL GEN_EV_8
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 11:06:06 PAGE     4
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 17:12:50 PAGE     4
 
 0115 5173            183             ACALL MQ_EVEN_8
 0117 22              184             RET
@@ -269,7 +269,7 @@ LOC  OBJ            LINE     SOURCE
 0169                 243     ME1_EV_2:       ;HAY SOBREPESO
 0169 7192            244             ACALL APAGAR_ADC
 016B 752673          245             MOV DISPLAY_0, #73H     ;P
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 11:06:06 PAGE     5
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 17:12:50 PAGE     5
 
 016E 75256D          246             MOV DISPLAY_1, #6DH     ;S
 0171 9126            247             ACALL CARGAR_DISPLAY_0
@@ -337,7 +337,7 @@ LOC  OBJ            LINE     SOURCE
 01BF 752004          304             MOV ESTADO, #04H
 01C2 D2B6            305             SETB CALENTADOR_AGUA
 01C4 7189            306             ACALL ACTIVAR_ADC_TEMP
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 11:06:06 PAGE     6
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 17:12:50 PAGE     6
 
 01C6 7198            307             ACALL ACTIVAR_TIMER_0
 01C8 C238            308             CLR TICK_1S
@@ -405,7 +405,7 @@ LOC  OBJ            LINE     SOURCE
 0215 C23D            366             CLR PRIMERA_VUELTA
 0217 7198            367             ACALL ACTIVAR_TIMER_0           ;VOLVEMOS A ACTIVAR LA CUENTA DE 15S
 0219 22              368             RET
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 11:06:06 PAGE     7
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 17:12:50 PAGE     7
 
 021A                 369     ME5_EV_3:       ; PASAN 50 MIN
 021A 1522            370             DEC TIEMPO_RESTANTE_MINS
@@ -473,7 +473,7 @@ LOC  OBJ            LINE     SOURCE
                              PO
 026E 9126            429             ACALL CARGAR_DISPLAY_0
 0270 911D            430             ACALL CARGAR_DISPLAY_1
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 11:06:06 PAGE     8
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 17:12:50 PAGE     8
 
 0272 22              431             RET
                      432     
@@ -541,7 +541,7 @@ LOC  OBJ            LINE     SOURCE
 02AD 201927          485             JB TICK_ADC, HAY_SP                     ;SI HAY TICK DEL ADC VAMOS A COMPROBAR EL S
                              P
 02B0 752100          486             MOV EVENTO,#00H
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 11:06:06 PAGE     9
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 17:12:50 PAGE     9
 
 02B3 22              487             RET
                      488     
@@ -609,7 +609,7 @@ LOC  OBJ            LINE     SOURCE
                      546     ;----------------------------------------------------------4-------------------------------
                              -------------------------
                      547     
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 11:06:06 PAGE    10
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 17:12:50 PAGE    10
 
 02F9                 548     GEN_EV_4:
                      549             ;CONDICIONES ESTADO 44
@@ -677,7 +677,7 @@ LOC  OBJ            LINE     SOURCE
                      606     
 034A                 607     GEN_EV_3_ES_5:  ;50MIN
 034A C23B            608             CLR TICK_50MIN
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 11:06:06 PAGE    11
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 17:12:50 PAGE    11
 
 034C C23C            609             CLR TICK_10MIN
 034E C23A            610             CLR TICK_1MIN
@@ -745,7 +745,7 @@ LOC  OBJ            LINE     SOURCE
 038E 43C509          667             ORL ADCON, #0x09                
 0391 22              668             RET
 0392                 669     APAGAR_ADC:
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 11:06:06 PAGE    12
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 17:12:50 PAGE    12
 
 0392 C2AE            670             CLR IE.6
 0394 53C5E0          671             ANL ADCON, #0xE0
@@ -813,7 +813,7 @@ LOC  OBJ            LINE     SOURCE
 03EB 052D            732                     INC CONT_15S
 03ED 752C00          733                     MOV CONT_1S, #00H
 03F0 D239            734                     SETB TICK_15S
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 11:06:06 PAGE    13
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 17:12:50 PAGE    13
 
 03F2 61C0            735                     AJMP ACTUALIZAR_CONT_TIMER_0
 03F4 22              736                     RET
@@ -881,7 +881,7 @@ LOC  OBJ            LINE     SOURCE
                      798     
 042F                 799     SET_TEMP_SELECT:
 042F 20B103          800             JB P3.1, SET_T_ALTAS
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 11:06:06 PAGE    14
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 17:12:50 PAGE    14
 
 0432 813B            801             AJMP SET_T_BAJAS
 0434 22              802             RET
@@ -949,7 +949,7 @@ LOC  OBJ            LINE     SOURCE
 047D E528            862                     MOV A, DECENAS
 047F 23              863                     RL A
 0480 900484          864                     MOV DPTR, #LISTA_DECENAS
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 11:06:06 PAGE    15
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 17:12:50 PAGE    15
 
 0483 73              865                     JMP @A+DPTR
 0484                 866             LISTA_DECENAS:
@@ -1017,7 +1017,7 @@ LOC  OBJ            LINE     SOURCE
 04DE 22              928                     RET
 04DF                 929             CU1:
 04DF 752606          930                     MOV DISPLAY_0, #0x06
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 11:06:06 PAGE    16
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 17:12:50 PAGE    16
 
 04E2 22              931                     RET
 04E3                 932             CU2:
@@ -1085,7 +1085,7 @@ LOC  OBJ            LINE     SOURCE
 0535 7198            993             ACALL ACTIVAR_TIMER_0
 0537 D0D0            994             POP PSW
 0539 D0E0            995             POP ACC
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 11:06:06 PAGE    17
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 17:12:50 PAGE    17
 
 053B 32              996             RETI
                      997     
@@ -1093,7 +1093,7 @@ LOC  OBJ            LINE     SOURCE
                              =============
                      999     
                     1000     END
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 11:06:06 PAGE    18
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 17:12:50 PAGE    18
 
 SYMBOL TABLE LISTING
 ------ ----- -------
@@ -1161,7 +1161,7 @@ CU9. . . . . . . . . . . . . .  C ADDR   04FFH   A
 DECENAS. . . . . . . . . . . .  N NUMB   0028H   A   
 DISPLAY_0. . . . . . . . . . .  N NUMB   0026H   A   
 DISPLAY_1. . . . . . . . . . .  N NUMB   0025H   A   
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 11:06:06 PAGE    19
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 17:12:50 PAGE    19
 
 ESTADO . . . . . . . . . . . .  N NUMB   0020H   A   
 ESTADO_0 . . . . . . . . . . .  C ADDR   00EBH   A   
@@ -1229,7 +1229,7 @@ ME0_EV_2 . . . . . . . . . . .  C ADDR   0139H   A
 ME1_EV_0 . . . . . . . . . . .  C ADDR   0158H   A   
 ME1_EV_1 . . . . . . . . . . .  C ADDR   0159H   A   
 ME1_EV_2 . . . . . . . . . . .  C ADDR   0169H   A   
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 11:06:06 PAGE    20
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 17:12:50 PAGE    20
 
 ME1_EV_3 . . . . . . . . . . .  C ADDR   0176H   A   
 ME1_EV_4 . . . . . . . . . . .  C ADDR   018BH   A   
@@ -1297,7 +1297,7 @@ TICK_1MIN. . . . . . . . . . .  B ADDR   0027H.2 A
 TICK_1S. . . . . . . . . . . .  B ADDR   0027H.0 A   
 TICK_50MIN . . . . . . . . . .  B ADDR   0027H.3 A   
 TICK_ADC . . . . . . . . . . .  B ADDR   0023H.1 A   
-A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 11:06:06 PAGE    21
+A51 MACRO ASSEMBLER  LAVADORA                                                             11/26/2025 17:12:50 PAGE    21
 
 TICK_INT_0 . . . . . . . . . .  B ADDR   0023H.0 A   
 TICK_PESADO_OK . . . . . . . .  B ADDR   0023H.4 A   
