@@ -1,0 +1,1300 @@
+\documentclass{article}
+\usepackage{enumitem}
+\setlistdepth{9}
+\usepackage{graphicx} % Requerido para insertar imágenes
+\renewcommand{\contentsname}{indice}
+\usepackage[spanish]{babel} % Cambia el idioma a español
+\usepackage{caption} % Para personalizar pies de foto
+\captionsetup[figure]{labelfont=it, textfont=it}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{listings} % Paquete para insertar código
+\usepackage[utf8]{inputenc} % Soporte para caracteres UTF-8
+\usepackage[T1]{fontenc} % Permite caracteres especiales en la fuente
+\usepackage{xcolor}
+\definecolor{codebg}{RGB}{248,248,248}      
+\definecolor{codeframe}{RGB}{210,210,210} 
+\usepackage[most]{tcolorbox} % Para cajas personalizadas
+\usepackage{fancyhdr} % Para encabezados y pies personalizados
+\usepackage[hidelinks]{hyperref}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{svg}          % incluye SVG y genera el PDF asociado
+\usepackage{graphicx}     % por si acaso
+\usepackage[spanish]{babel}
+\usepackage{listings}
+\usepackage[table]{xcolor}  % <-- necesario para colorear filas de tablas
+\usepackage{xcolor}
+\usepackage{placeins}   % <-- añádelo al preámbulo
+\usepackage[strict]{changepage}  % para adjustwidth
+\lstdefinelanguage{assembly}{
+  morekeywords={ORG, AJMP, ACALL, MOV, RL, JMP, EQU, SETB, CLR, CPL, JB, JNB, DJNZ, RET, RETI, INC, DEC, ADD, SUBB, ANL, ORL, XRL, CJNE, SJMP, LJMP, NOP, END},
+  sensitive=false,
+  morecomment=[l]{;},
+  morestring=[b]',
+}
+
+\lstset{
+  language=assembly,
+  basicstyle=\ttfamily\footnotesize\color{black},   % letra pequeña
+  keywordstyle=\color{blue}\bfseries,
+  commentstyle=\color{teal},
+  stringstyle=\color{red},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  stepnumber=1,
+  numbersep=5pt,
+  frame=single,
+  breaklines=true,
+  tabsize=4,
+  xleftmargin=0pt,   % margen izq. reducido
+  xrightmargin=0pt,  % margen der. reducido
+  columns=flexible,              % ajuste fino de espacios
+  keepspaces=true
+}
+
+% --- Configuración de encabezado ---
+\pagestyle{fancy}                 % Activa fancyhdr
+\fancyhf{}                        % Limpia encabezado y pie de página
+\fancyhead[L]{Administración de Sistemas}     % Izquierda del encabezado
+\fancyhead[C]{  }         % Centro del encabezado
+\fancyhead[R]{Proyecto}         % Derecha del encabezado
+\renewcommand{\headrulewidth}{0.4pt} % Línea horizontal del encabezado
+\renewcommand{\footrulewidth}{0pt}   % Línea en pie de página desactivada
+
+% Estilo "terminal"
+\lstdefinestyle{terminal}{
+  basicstyle=\ttfamily\small,
+  columns=fullflexible,
+  showstringspaces=false,
+  backgroundcolor=\color{codebg},
+  frame=single,
+  framerule=0.5pt,
+  rulecolor=\color{codeframe},
+  framesep=6pt,
+  xleftmargin=0pt,
+  breaklines=true,       
+  breakatwhitespace=false
+}
+
+
+\begin{document}
+
+\begin{titlepage}
+    \thispagestyle{empty} % Quita encabezado y pie en la portada
+    \centering
+    \vspace*{1cm} % Espacio superior
+    
+    \includegraphics[width=0.9\textwidth]{imagenes/logoUPV.png}  \\[2cm]
+    
+    {\LARGE \textbf{Arquitectura de Computadores}} \\[2cm]    
+    {\LARGE Proyecto } \\[1cm]
+
+    \vfill % Espacio flexible
+        
+    \textbf{Titulación:} \\
+    Grado en Informática de Gestión y Sistemas de Información \\[1cm]
+    4º curso (1º cuatrimestre) \\[1cm]
+    Fecha: 1-12-2025 \\[1cm]  
+    \begin{flushright}
+    López, Aldonza, Iker\\
+    \end{flushright}
+\end{titlepage}
+\tableofcontents
+\newpage
+\section{Introducción}
+Para este proyecto se requeria de codificar una lavadora funcional con varios modos de tempreatura, una funcion de pesado, dos velocidades de lavado que se extienden en el tiempo y la capacidad de iniciar tantos lavados como queramos.\\\\
+Para ello surgen varios problemas que hemos de resolver con las herramientas disponibles en un procesador 80C552 de Phillips. En cuanto a mediciones de tiempo existen: \textbf{1s, 15s, 1min, 10min, 50min}. Todos se medirán con el \textbf{timer0} del procesador. Este medira en su modo 1 generando a las 30,5 aprox. interrupciones un 1s con este axioma podemos generar el resto de tiempos.\\\\
+Para las mediciones de peso y temperatura se usa el \textbf{Conversor Analógico Digital (ADC)} el cual por el canal 0 medira el peso y por el canal 1 medirá la temperatura.\\\\
+Para controlar la potencia del motor usaremos el \textbf{PulseWidthModulator (PWM)} en dos modos uno que hará girar a 60RPM Y otro que hará girar a 600RPM.\\\\
+En cuanto a las decisiones de diseño se ha optado siempre por minimizar dentro de lo logico y razonable el numero de estados, aumenta asi el numero de eventos por estado. Por otro lado los cambios de estado se gestionan desde un generador de eventos por cada propio estado, es decir 9 Estados → 9 Generadores de Eventos.
+\newpage
+\section{Diagramas de estados y flujo}
+
+\subsection{Diagrama de estados}
+\begin{figure}[H]        % H mayúscula = "aquí y no te muevas"
+  \centering
+  \includegraphics[width=12cm]{imagenes/EstadosLavadora.jpg}
+  \caption{Diagrama de estados de la lavadora.}
+\end{figure}
+\FloatBarrier   
+\subsection{Tablas de estados, eventos y acciones}
+\begin{table}[H]
+\centering
+\caption{Tabla de estados}
+\begin{tabular}{|c|l|}
+\hline
+\textbf{Nº estado} & \textbf{Nombre del estado} \\ \hline
+0 & Reposo                     \\
+1 & Comprobación sobrepeso     \\
+2 & Puerta abierta             \\
+3 & Llenando                   \\
+4 & Calentar cuba              \\
+5 & Lavado                     \\
+6 & Vaciar agua                \\
+7 & Centrifugar                \\
+8 & Fin                        \\ \hline
+\end{tabular}
+\end{table}
+
+\newpage
+\begin{adjustwidth}{-2cm}{-2cm}   % ← igual margen a izda. y dcha. para centrar
+\centering
+\textbf{Tabla de Eventos}        % título manual (caption fuera del float)
+
+\medskip
+
+\begin{tabular}{|c|c|p{4cm}|p{6cm}|}
+\hline
+\textbf{Nº Estado} & \textbf{Nº Evento} & \textbf{Condición} & \textbf{Acciones} \\ \hline
+0 & 0 & Botón apagado (P3.2 = 1) & Entrar en modo IDLE \\ \hline
+0 & 1 & Botón encendido + puerta abierta & Ir a estado 2, mostrar "AP" \\ \hline
+0 & 2 & Botón encendido + puerta cerrada & Ir a estado 1, activar ADC peso \\ \hline
+1 & 0 & Sin evento & -- \\ \hline
+1 & 1 & Puerta abierta & Ir a estado 2, apagar ADC \\ \hline
+1 & 2 & Sobrepeso detectado & Mostrar "PS", quedarse en estado 1 \\ \hline
+1 & 3 & Peso OK + botón inicio pulsado & Bloquear puerta, abrir válvula, ir a estado 3 \\ \hline
+1 & 4 & Peso OK + botón inicio no pulsado & Mostrar temp, esperar inicio \\ \hline
+2 & 0 & Sin evento & -- \\ \hline
+2 & 1 & Puerta cerrada & Ir a estado 1, seleccionar temp, activar ADC peso \\ \hline
+3 & 0 & Sin evento & -- \\ \hline
+3 & 1 & Sensor de llenado activado & Cerrar válvula, encender calentador, ir a estado 4 \\ \hline
+4 & 0 & Sin evento & -- \\ \hline
+4 & 1 & Agua aún fría & Seguir calentando \\ \hline
+4 & 2 & Agua caliente alcanzada & Apagar calentador, encender motor 60 rpm, ir a estado 5 \\ \hline
+5 & 0 & Sin evento & -- \\ \hline
+5 & 1 & Tick 15 s & Cambiar sentido giro, actualizar displays \\ \hline
+5 & 2 & Tick 1 min & Decrementar tiempo, actualizar displays \\ \hline
+5 & 3 & Tick 50 min & Pasar a estado 6, encender desagüe \\ \hline
+6 & 0 & Sin evento & -- \\ \hline
+6 & 1 & Sensor vaciado activado & Pasar a estado 7, motor 600 rpm centrifugar \\ \hline
+7 & 0 & Sin evento & -- \\ \hline
+7 & 1 & Tick 10 min & Apagar motor, desbloquear puerta, mostrar "LF", ir a estado 8 \\ \hline
+7 & 2 & Tick 1 min & Decrementar tiempo, actualizar displays \\ \hline
+8 & 0 & Sin evento & -- \\ \hline
+8 & 1 & Puerta abierta & Ir a estado 2, mostrar "AP" \\ \hline
+\end{tabular}
+\end{adjustwidth}
+\newpage
+*ACCIONES DE \textbf{SETB Y CLR} SE MENCIONAN EN LA TABLA ANTERIOR. ESAS ACCIONES NO SON CONSIDERADAS EN ESTA TABLA*\\\\
+\begin{adjustwidth}{-2cm}{-2cm}
+\centering
+\textbf{Tabla de Códigos de Acciones}
+
+\medskip
+\rowcolors{2}{gray!15}{white}
+\begin{tabular}{|c|p{9.5cm}|}
+\hline
+\textbf{Código} & \textbf{Descripción de la acción} \\ \hline
+A1 & Entrar en modo IDLE (ORL PCON,\#01H) \\ \hline
+A2 & Activar ADC Peso \\ \hline
+A3 & Cargar Display 0 \\ \hline
+A4 & Cargar Display 1 \\ \hline
+A5 & Apagar el ADC \\ \hline
+A6 & Cargar la TMP seleccionada en Display 0 \\ \hline
+A7 & Set la TEMPERATURA seleccionada \\ \hline
+A8 & Activar el ADC Temperatura \\ \hline
+A9 & Activar Timer 0 \\ \hline
+A10 & Activar PWM 0 a 60RPM \\ \hline
+A11 & Mapear Tiempo restante a Displays 0 y 1 \\ \hline
+A12 & Apagar el Timer 0 \\ \hline
+A13 & Cambiar el Sentido de Giro del Tambor \\ \hline
+A14 & Activar el PWM 0 a 600RPM \\ \hline
+A15 & Apagar el PWM 0 \\ \hline
+\end{tabular}
+\end{adjustwidth}
+\subsection{Diagramas de flujo}
+\subsubsection{Secuencia Principal}
+\subsubsection{Interrupciones}
+\subsubsection{Maq. Eventos 'Calentando Agua'}
+
+
+\newpage
+\section{Cálculos y comentarios}
+\subsection{Cálculo Sobrepeso}
+Para calcular el valor a partir del cual mediremos sobre peso debemos tener en cuenta lo siguiente. Nuestro $V_{\text{min}}$ es 0V y nuestro $V_{\text{max}}$ son 5V. Por tanto: \\
+\begin{equation}
+    V_D = 2^n \frac{V_x - V_{min}}{V_{max} - V_{min}}
+    \label{eq:placeholder_label}
+\end{equation}
+\\
+De esta forma sabemos que nuestro $V_{\text{x}}$ es 4,5V según lo especificado.
+\\
+\begin{equation}
+    V_D = 2^8 \cdot \frac{4{,}5 - 0}{5 - 0} = 230{,}4 \approx 230_{d}
+    \label{eq:placeholder_label}
+\end{equation}
+O lo que es lo mismo \textbf{0xE6} en Hexadecimal
+\subsection{Cálculo Temperaturas}
+Para el calculo de las temperaturas tenemos que 0ºc son 0V y 100ºc son 5V por ello para calcular las 3 temperaturas tenemos:
+\begin{itemize}
+    \item 40ºc son 2V
+    \item 60ºc son 3V
+    \item 80ºc son 4V
+\end{itemize}
+De esta manera podemos introducir en la equación: \begin{equation}
+    V_D = 2^n \frac{V_x - V_{min}}{V_{max} - V_{min}}
+    \label{eq:placeholder_label}
+\end{equation}
+Por tanto:
+\begin{itemize}
+    \item 40ºc / 2V \begin{equation}
+    V_D = 2^8 \cdot \frac{2 - 0}{5 - 0} = 102{,}4 \approx 102_{d} = 0xCD
+    \label{eq:placeholder_label}
+\end{equation}
+        \item 60ºc / 3V \begin{equation}
+    V_D = 2^8 \cdot \frac{3 - 0}{5 - 0} = 153{,}6 \approx 154_{d} = 0x9A
+    \label{eq:placeholder_label}
+\end{equation}
+            \item 80ºc / 4V \begin{equation}
+    V_D = 2^8 \cdot \frac{4 - 0}{5 - 0} = 204{,}8 \approx 205_{d} = 0x66
+    \label{eq:placeholder_label}
+\end{equation}
+\end{itemize}
+\newpage
+\subsection{Cálculo timer0 1s}
+Para calcular un segundo del timer usaremos el \textbf{Timer0 en modo 1}. Esto significa que el timer contará desde \textit{0-65535d} y cuando llegue a este ultimo numero hará saltar una interrupción.\\
+Hay que mencionar que contamos con un preescaler el cual reduce la frecuencia del tick del procesador.\\ 
+Calculamos la frecuencia como:
+\[
+f_{\text{tick}} = \frac{f_{\text{Osc}}}{\text{Prescaler}}
+                = \frac{24\cdot10^{6}}{12}
+                = 2\cdot10^{6}
+\]
+
+\[T_{tick} = \frac{1}{f_{tick}} = \frac{1}{2*10^6} = 0,5 * 10^{-6}\]
+
+Así el numero de ticks para 1s viene a ser:\\
+\[nºTicks = \frac{1s}{0,5*10^{-6}\frac{s}{tick}}=2*10^{6}ticks = 1s\]
+Sabemos que cada interrupcion cuenta 65536 ticks, de esta manera:
+\[numInterrupciones = \frac{2*10^{6}}{65536}=30,5175\]
+Por ello hemos de contar 30 Interrupciones y 0,5175. Esta vuelta NO-completa la calcularemos la primera y para ello iniciaremos el timer 0 con los valores que hagan contar solo 0,5175 de 65536.\\
+\[0,5175*65536 = 33920; 65535 - 33920 = 31615\]
+\textbf{Estrategia para contar 1s:}\\
+\begin{itemize}
+    \item 30 veces x {0-65535} Iniciamos TH0 a 0x00 y TL0 a 0x00
+    \item 1 x vez {31615-65535} Iniciaremos TH0 a 0x7B y TL0 a 0x80
+\end{itemize}
+\newpage
+\subsection{Cálculos PWM}
+Para calcular los valores a pasar al PWM0 debemos saber que la $f_{osc}$ es 24MHz y que no tenemos Preescaler.\\
+De esta manera sabemos que: \[f_{PWM}=\frac{f_{osc}}{2*(1+PWMP)*255} = \frac{24*10^{6}}{2*(1+0)*255} = 0,04706*10^{6}\]
+PWMP es 0 ya que no usamos preescaler.
+Modo a 60RPM equivale a 90\% de la frecuencia, y otro modo a 600RPM a 10\%. Por otro lado, existe el modo Apagado en el cual el ciclo es del 100\%.
+\[Valor = 255*(1-Ciclo)\]
+\begin{itemize}
+    \item MODO 60RPM: \[PWM0 = 255(1 - 0.9) = 25.5 \approx 26_{d} = 0x1A\]
+    \item MODO 600RPM: \[PWM0 = 255(1 - 0.1) = 229.5 \approx 230_{d} = 0xE6\]
+    \item MODO 0RPM: \[PWM0 = 255(1 - 1) = 0_{d} = 0x00\]
+\end{itemize}
+\subsection{Comentarios sobre Acciones Destacables}
+\subsubsection{Mapear minutos a Displays}
+\subsubsection{Extracción valor Tempreatura}
+\subsection{Lógica de Cuenta de Tiempo}
+\newpage
+\section{Código}
+\begin{adjustwidth}{-2cm}{-2cm}
+\begin{lstlisting}
+;=================VARIABLES============
+	
+ESTADO EQU 0x20
+EVENTO EQU 0x21
+DISPLAY_1 EQU 0X25
+DISPLAY_0 EQU 0x26
+
+;------------------CUENTAS Y VALORES--------------
+
+TIEMPO_RESTANTE_MINS EQU 0x22
+DECENAS EQU 0x28
+UNIDADES EQU 0x29
+TEMP_SEL EQU 0x2A
+
+PRIMERA_VUELTA EQU 0x27.5
+CONT_INTERRUPCIONES_T0 EQU 0x2B
+CONT_1S EQU 0x2C
+CONT_15S EQU 0x2D
+CONT_1MIN EQU 0x2E
+CONT_10MIN EQU 0x2F
+
+VALOR_ADC EQU 0x30
+;------------------TICKS--------------
+
+TICK_INT_0 EQU 0x23.0
+TICK_ADC EQU 0x23.1
+TICK_TIMER_0 EQU 0x23.3
+TICK_PESADO_OK EQU 0x23.4
+TICK_1S EQU 0X27.0
+TICK_15S EQU 0x27.1
+TICK_1MIN EQU 0x27.2
+TICK_50MIN EQU 0X27.3
+TICK_10MIN EQU 0X27.4 
+
+;-----------SENSORES Y ACTIVACIONES-----------------
+
+BLOQUEO_PUERTA EQU P0.7
+MOTOR_DESAGUE EQU P1.0
+PUERTA_ABIERTA EQU P1.1
+SENSOR_LLENADO EQU P1.2
+SENSOR_VACIADO EQU P1.3
+BOTON_INICIO EQU P1.4
+BIT1_TEMP EQU P3.1
+BIT0_TEMP EQU P3.0
+VALV_ENTRADA_AGUA EQU P3.3
+CALENTADOR_AGUA EQU P3.6
+SENTIDO_GIRO_MOTOR EQU P2.7
+
+;-------------REGISTROS IMPORTANTES-------------------------------
+
+ADCON EQU 0xC5
+ADCH EQU 0xC6
+PWMP EQU 0xFE
+PWM0 EQU 0xFC
+
+;============INCIO===========
+
+ORG 0x0000
+	AJMP INICIO
+ORG 0X0003
+	AJMP INT0_ISR
+ORG 0x000B
+	AJMP TIMER_0_ISR
+ORG 0X0053
+	AJMP ADC_ISR
+ORG 0X007b
+
+INICIO:
+	ACALL INICIALIZACIONES
+
+MAIN:					;LAZO PRINCIPAL
+	ACALL MAQ_ESTADOS
+	AJMP MAIN
+
+MAQ_ESTADOS:
+	MOV A, ESTADO
+	RL A
+	MOV DPTR, #LISTA_EST
+	JMP @A+DPTR
+LISTA_EST:
+	AJMP ESTADO_0 ; REPOSO
+	AJMP ESTADO_1 ; COMPROBACION SOBREPESO
+	AJMP ESTADO_2 ; PUERTA ABIERTA
+	AJMP ESTADO_3 ; LLENANDO
+	AJMP ESTADO_4 ; CALENTAR CUBA
+	AJMP ESTADO_5 ; LAVADO
+	AJMP ESTADO_6 ; VACIAR AGUA
+	AJMP ESTADO_7 ; CENTRIFUGAR
+	AJMP ESTADO_8 ; FIN
+
+;=============INICIALIZACIONES======================
+
+INICIALIZACIONES:
+
+	MOV ESTADO, #0
+	MOV EVENTO, #0
+	MOV DISPLAY_1, #0x05
+	MOV DISPLAY_0, #0x00
+	MOV TIEMPO_RESTANTE_MINS, #0x3C	;INICIAMOS LOS MINUTOS RESTANTES DE LAVADO A 60h IREMOS RESTANDO DE UNO EN UNO
+	MOV PWMP, #0x80
+	CLR IE.7
+	SETB P3.2		;DESACTIVAMOS A NIVEL BAJO LA INT0
+	SETB IE.7		;ACTIVAMOS EA* TODAS LAS INTERRUPCIONES
+	SETB IE.0		;ACTIVAMOS LA INT0	
+	CLR TICK_INT_0 		;TICK A NIVEL ALTO POR ELLO SE INICIA A 0
+	CLR TICK_ADC 		;TICK A NIVEL ALTO INICIAMOS A 0
+	CLR TICK_1S
+	CLR TICK_15S
+	CLR TICK_1MIN
+	CLR TICK_10MIN
+      	CLR TICK_50MIN
+	CLR TICK_PESADO_OK
+	CLR PRIMERA_VUELTA	
+	
+	;ENTRADAS HACEMOS SETB Y ANTES DE LA SIMULACION MARCAMOS EL !! PIN !! AL ESTADO QUE NECESITEMOS INICIAL
+	SETB P1.1
+	SETB P1.2
+	SETB P1.3
+	SETB P1.4
+	SETB P3.0
+	SETB P3.1
+
+	;SALIDAS HACEMOS CLR PORQUE NO NOS ENCARGAREMOS MANUALMENTE DE HACER NADA ES EL PROPIO PROGRAMA EL QUE LOS ACTIVA
+	CLR P1.0
+	CLR P3.3
+	CLR P3.6
+	ANL P0, #0x00		;ASIGNAMOS P0 COMO OUTPUT
+	ANL P2, #0x00		;ASIGNAMOS P2 COMO OUTPUT
+		
+	CLR P1.5
+	CLR P1.6
+	CLR P1.7
+	CLR P3.4
+	CLR P3.5
+	CLR P3.7
+
+	RET	
+;============================================================
+
+;LLAMAMOS AL GENERADOR DE EVENTOS PARA QUE ASI NOS DIGA A CUAL DEBEMOS IR EN EL ESTADO DEL SISTEMA QUE NOS ENCONTRAMOS
+
+ESTADO_0:
+	ACALL GEN_EV_0
+	ACALL MQ_EVEN_0 	;REPOSO
+	RET
+
+ESTADO_1:
+	ACALL GEN_EV_1
+	ACALL MQ_EVEN_1		;COMPROBANDO SP
+	RET
+
+ESTADO_2:
+	ACALL GEN_EV_2
+	ACALL MQ_EVEN_2
+	RET
+
+ESTADO_3:
+	ACALL GEN_EV_3
+	ACALL MQ_EVEN_3
+	RET
+ESTADO_4:
+	ACALL GEN_EV_4
+	ACALL MQ_EVEN_4
+	RET
+
+ESTADO_5:
+	ACALL GEN_EV_5
+	ACALL MQ_EVEN_5
+	RET
+
+ESTADO_6:
+	ACALL GEN_EV_6
+	ACALL MQ_EVEN_6
+	RET
+
+ESTADO_7:
+	ACALL GEN_EV_7
+	ACALL MQ_EVEN_7
+	RET
+
+ESTADO_8:
+	ACALL GEN_EV_8
+	ACALL MQ_EVEN_8
+	RET
+
+
+;==================ESTADO 0 - REPOSO=========
+MQ_EVEN_0:
+
+	MOV A, EVENTO
+	RL A
+	MOV DPTR, #LIST_EVEN_MQEV_0
+	JMP @A+DPTR
+LIST_EVEN_MQEV_0:
+	AJMP ME0_EV_0 ; Evento 0
+	AJMP ME0_EV_1 ; Evento 1
+	AJMP ME0_EV_2 ; Evento 2
+ME0_EV_0:
+	ORL PCON, #01H 		;PONEMOS EL IDLE BIT 0 DE PCON NO DEBEMOS ACCEDER EN FORMA DE BIT HACEMOS UN ORL
+	RET
+ME0_EV_1:
+	;---	;ENCENDIO Y PUERTA ABIERTA
+	CLR IE.0
+	MOV DISPLAY_0, #77H	;A
+	MOV DISPLAY_1, #73H	;P
+	ACALL CARGAR_DISPLAY_0
+	ACALL CARGAR_DISPLAY_1	
+	MOV ESTADO, #02H
+	RET
+ME0_EV_2:
+	;---	;ENCENDIO Y PUERTA CERRADA
+	CLR IE.0
+	SETB IE.7
+	SETB IE.6
+	ACALL ACTIVAR_ADC_PESO
+	CLR P3.2
+	MOV ESTADO, #01H
+	RET
+
+;==============ESTADO 1 - COMPROBANDO SP========
+MQ_EVEN_1:
+	MOV A, EVENTO
+	RL A
+	MOV DPTR, #LIST_EVEN_MQEV_1
+	JMP @A+DPTR
+LIST_EVEN_MQEV_1:
+	AJMP ME1_EV_0 ; Evento 0
+	AJMP ME1_EV_1 ; Se abre la puerta
+	AJMP ME1_EV_2 ; salta adc y sobre peso
+	AJMP ME1_EV_3 ; salta adc, peso ok y p1.4
+	AJMP ME1_EV_4 ; salta adc, peso ok y no p1.4
+ME1_EV_0:
+	RET
+
+ME1_EV_1:	;PUERTA ABIERTA
+	ACALL APAGAR_ADC
+	MOV DISPLAY_0, #77H	;A
+	MOV DISPLAY_1, #73H	;P
+	MOV ESTADO, #02H
+	ACALL CARGAR_DISPLAY_0
+	ACALL CARGAR_DISPLAY_1	
+	RET
+ME1_EV_2:	;HAY SOBREPESO
+	ACALL APAGAR_ADC
+	MOV DISPLAY_0, #73H	;P
+	MOV DISPLAY_1, #6DH	;S
+	ACALL CARGAR_DISPLAY_0
+	ACALL CARGAR_DISPLAY_1
+	RET
+ME1_EV_3:	;NO SOBREPESO Y ENCENDIDO
+	ACALL APAGAR_ADC
+	MOV DISPLAY_1, #78H	;t
+	SETB BLOQUEO_PUERTA
+	ACALL CARGAR_TEMP_DSP_0 ;Esta subrutina carga en DISPLAY_1 el valor de la temperatura actual
+	ACALL CARGAR_DISPLAY_0
+	ACALL CARGAR_DISPLAY_1
+	SETB VALV_ENTRADA_AGUA
+	MOV ESTADO, #03H
+	RET
+
+ME1_EV_4:			;NO SOBREPESO Y NO IR A LLENADO, ESPERAMOS POR EL BOTON_INICIO
+	ACALL APAGAR_ADC
+	MOV DISPLAY_1, #78H	;t
+	ACALL CARGAR_TEMP_DSP_0 ;Esta subrutina carga en DISPLAY_0 el valor de la temperatura actual
+	ACALL CARGAR_DISPLAY_0
+	ACALL CARGAR_DISPLAY_1
+	RET
+;===============ESTADO 2 - PUERTA ABIERTA=================
+
+MQ_EVEN_2:
+	MOV A, EVENTO
+	RL A
+	MOV DPTR, #LIST_EVEN_MQEV_2
+	JMP @A+DPTR
+LIST_EVEN_MQEV_2:
+	AJMP ME2_EV_0 ; Evento 0
+	AJMP ME2_EV_1 ; Descripci?n Maq. Event. 0. Evento 1
+ME2_EV_0:
+	RET
+ME2_EV_1:	;PUERTA CERRADA
+	MOV ESTADO, #01H
+	ACALL SET_TEMP_SELECT
+	ACALL ACTIVAR_ADC_PESO
+	SETB IE.7
+	SETB IE.6
+	CLR TICK_ADC
+	CLR TICK_PESADO_OK
+	RET
+
+;==========ESTADO 3 - LLENADO=============
+
+MQ_EVEN_3:
+	MOV A, EVENTO
+	RL A
+	MOV DPTR, #LIST_EVEN_MQEV_3
+	JMP @A+DPTR
+LIST_EVEN_MQEV_3:
+	AJMP ME3_EV_0 		; Evento 0
+	AJMP ME3_EV_1 
+ME3_EV_0:
+	RET
+ME3_EV_1:			;CUBA LLENA
+	MOV ESTADO, #04H
+	SETB CALENTADOR_AGUA
+	ACALL ACTIVAR_ADC_TEMP
+	ACALL ACTIVAR_TIMER_0
+	CLR TICK_1S
+	CLR VALV_ENTRADA_AGUA
+	ACALL SET_TEMP_SELECT
+	RET
+
+;=============ESTADO 4 - CALENTAMIENTO CUBA===============
+
+MQ_EVEN_4:
+	MOV A, EVENTO
+	RL A
+	MOV DPTR, #LIST_EVEN_MQEV_4
+	JMP @A+DPTR
+LIST_EVEN_MQEV_4:
+	AJMP ME4_EV_0 ; Evento 0
+	AJMP ME4_EV_1
+	AJMP ME4_EV_2 
+ME4_EV_0:
+	RET
+ME4_EV_1:	; NO CALIENTE
+	CLR PRIMERA_VUELTA
+	ACALL ACTIVAR_TIMER_0
+	ACALL ACTIVAR_ADC_TEMP
+	RET
+ME4_EV_2:	; AGUA CALIENTE
+	MOV ESTADO, #05H
+	CLR CALENTADOR_AGUA
+	CLR PRIMERA_VUELTA
+	ACALL ACTIVAR_TIMER_0
+	ACALL ACTIVAR_PWM0_60RPM
+	RET
+
+;=============ESTADO 5 - LAVADO============
+
+MQ_EVEN_5:
+	MOV A, EVENTO
+	RL A
+	MOV DPTR, #LIST_EVEN_MQEV_5
+	JMP @A+DPTR
+LIST_EVEN_MQEV_5:
+	AJMP ME5_EV_0 ; Evento 0
+	AJMP ME5_EV_1
+	AJMP ME5_EV_2
+	AJMP ME5_EV_3 
+ME5_EV_0:
+	RET
+ME5_EV_1:	; PASA 15S
+	ACALL CAMBIAR_SENTIDO_GIRO
+	CLR PRIMERA_VUELTA
+	ACALL ACTIVAR_TIMER_0
+	ACALL MAPEAR_TIEMPO_D1_D0		;ACTUALIZAMOS PARA PODER MODIFICAR EL PUERTO 2.7
+	ACALL CARGAR_DISPLAY_0
+	ACALL CARGAR_DISPLAY_1
+	RET
+ME5_EV_2:	; PASAN 1 MIN
+	DEC TIEMPO_RESTANTE_MINS
+	ACALL MAPEAR_TIEMPO_D1_D0		;GUARDA EN DSP1 Y DSP0 LOS VALORES DEL TIEMPO
+	ACALL CARGAR_DISPLAY_0
+	ACALL CARGAR_DISPLAY_1
+	CLR PRIMERA_VUELTA
+	ACALL ACTIVAR_TIMER_0		;VOLVEMOS A ACTIVAR LA CUENTA DE 15S
+	RET
+ME5_EV_3:	; PASAN 50 MIN
+	DEC TIEMPO_RESTANTE_MINS
+	ACALL MAPEAR_TIEMPO_D1_D0		;GUARDA EN DSP1 Y DSP0 LOS VALORES DEL TIEMPO
+	ACALL CARGAR_DISPLAY_0
+	ACALL CARGAR_DISPLAY_1
+	ACALL APAGAR_TIMER
+	ACALL APAGAR_PWM0
+	MOV ESTADO, #06H
+	SETB MOTOR_DESAGUE
+	CLR PRIMERA_VUELTA
+	RET
+
+;==============ESTADO 6 - VACIAR AGUA============
+
+MQ_EVEN_6:
+	MOV A, EVENTO
+	RL A
+	MOV DPTR, #LIST_EVEN_MQEV_6
+	JMP @A+DPTR
+LIST_EVEN_MQEV_6:
+	AJMP ME6_EV_0 ; Evento 0
+	AJMP ME6_EV_1
+ME6_EV_0:
+	RET
+ME6_EV_1:	; CUBA VACIA
+	ACALL ACTIVAR_PWM0_600RPM
+	ACALL ACTIVAR_TIMER_0
+	SETB SENTIDO_GIRO_MOTOR
+	ACALL MAPEAR_TIEMPO_D1_D0
+	ACALL CARGAR_DISPLAY_1
+	ACALL CARGAR_DISPLAY_0
+	MOV ESTADO, #07H
+	RET
+
+;==========ESTADO 7 - CENTRIFUGAR========
+
+MQ_EVEN_7:
+	MOV A, EVENTO
+	RL A
+	MOV DPTR, #LIST_EVEN_MQEV_7
+	JMP @A+DPTR
+LIST_EVEN_MQEV_7:
+	AJMP ME7_EV_0 	; Evento 0
+	AJMP ME7_EV_1	; PASAN LOS 10MIN ACABAMOS EL CENTRIF.
+	AJMP ME7_EV_2	; ACTUALIZAR TIEMPO Y NO 10 MINS DE CENTRIF.
+ME7_EV_0:
+	RET
+ME7_EV_1:	; PASAN 10 MIN
+	MOV ESTADO, #08H
+	ACALL APAGAR_PWM0
+	CLR BLOQUEO_PUERTA
+	MOV DISPLAY_1, #0x38	;L
+	MOV DISPLAY_0, #0x71	;F
+	ACALL CARGAR_DISPLAY_0
+	ACALL CARGAR_DISPLAY_1
+        CLR MOTOR_DESAGUE
+	RET
+
+ME7_EV_2:	; PASA 1 MIN
+	DEC TIEMPO_RESTANTE_MINS
+	ACALL MAPEAR_TIEMPO_D1_D0		;GUARDA EN DSP1 Y DSP0 LOS VALORES DEL TIEMPO
+	ACALL CARGAR_DISPLAY_0
+	ACALL CARGAR_DISPLAY_1
+	RET
+
+;=============ESTADO 8 - FIN=============
+
+MQ_EVEN_8:
+	MOV A, EVENTO
+	RL A
+	MOV DPTR, #LIST_EVEN_MQEV_8
+	JMP @A+DPTR
+LIST_EVEN_MQEV_8:
+	AJMP ME8_EV_0 ; Evento 0
+	AJMP ME8_EV_1
+ME8_EV_0:
+	RET
+ME8_EV_1:			; PUERTA ABIERTA
+	MOV DISPLAY_0, #77H	; A
+	MOV DISPLAY_1, #73H	; P
+	MOV ESTADO, #02H
+	ACALL CARGAR_DISPLAY_0
+	ACALL CARGAR_DISPLAY_1	
+	RET
+
+;============GENERADORES DE EVENTOS==========
+
+;-------------------------------0------------------------
+
+GEN_EV_0:
+	;CONDICIONES ESTADO 0
+	JNB P3.2, COMPROBAR_PUERTA	;SI NO ESTA EL BOTON NI NOS MOLESTAMOS EN VER EL RESTO DE CONDICIONES 
+	MOV EVENTO, #00H		;ESTAMOS SEGURO EN ESTADO 0 SI NO ESTA P3.2
+	RET
+
+COMPROBAR_PUERTA:
+	JB PUERTA_ABIERTA, GEN_EV_1_ES_0
+	AJMP GEN_EV_2_ES_0
+
+GEN_EV_1_ES_0:
+	ANL PCON, #0xFE 		;QUITAMOS EL IDLE MODIFICANDO EL BIT 0 DEL PCON
+	MOV EVENTO, #01H		;EN EL CASO DE QUE SI ESTE LA PUERTA ABIERTA EVENTO 1 ESTADO 0
+	RET
+
+GEN_EV_2_ES_0:
+	ANL PCON, #0xFE			;QUITAMOS EL IDLE MODIFICANDO EL BIT 0 DEL PCON
+	MOV EVENTO, #02H		;EN EL CASO DE QUE SI ESTE LA PUERTA ABIERTA EVENTO 2 ESTADO 0
+	RET
+
+
+
+;------------------1--------------
+
+GEN_EV_1:
+	;CONDICIONES ESTADO 1			
+	JB PUERTA_ABIERTA, GEN_EV_1_ES_1	;SI PUERTA ABIERTA NOS VAMOS A PUERTA ABIERTA
+	JB TICK_PESADO_OK, COMPROBAR_BTN_INICIO	;SI HEMOS PESADO YA COMPROBAMOS SI HEMOS PULSADO INICIO
+	JB TICK_ADC, HAY_SP			;SI HAY TICK DEL ADC VAMOS A COMPROBAR EL SP
+	MOV EVENTO,#00H
+	RET
+
+COMPROBAR_BTN_INICIO:
+	JB BOTON_INICIO, GEN_EV_3_ES_1
+	MOV EVENTO,#00H
+	RET
+
+GEN_EV_1_ES_1:			;PUERTA ABIERTA
+	CLR TICK_ADC
+	CLR TICK_PESADO_OK
+	MOV EVENTO, #01H
+	RET
+GEN_EV_2_ES_1:			;SOBREPESO
+	CLR TICK_ADC
+	MOV EVENTO, #02H
+	RET
+GEN_EV_3_ES_1:			;PESO OK E INICIO AVANZAMOS DE ESTADO
+	CLR TICK_ADC
+	MOV EVENTO, #03H
+	RET
+GEN_EV_4_ES_1:			;PESO OK NO INICIO NOS QUEDAMOS ESPERANDO A QUE SE PULSE INICIO
+	CLR TICK_ADC
+	SETB TICK_PESADO_OK
+	MOV EVENTO, #04H
+	RET
+
+HAY_SP:
+	MOV A, VALOR_ADC
+	SUBB A, #0xE6; <-  VALOR SP EQUIVALE A 4.5 VOLTIOS 230d 
+	JNC GEN_EV_2_ES_1 	;SI EL RESULTADO ES NEGATIVO (HAY CARRY) VALOR SP > ADCH PESO OK
+	JNB BOTON_INICIO, GEN_EV_4_ES_1	;SI NO SI ESTA INICIO PULSADO PASAMOS AL EVENTO 4
+	AJMP GEN_EV_3_ES_1
+	RET
+	
+;--------2-----------------
+
+GEN_EV_2:
+	;CONDICIONES ESTADO 0
+	JNB PUERTA_ABIERTA,  GEN_EV_1_ES_2
+	MOV EVENTO, #00H
+	RET
+
+GEN_EV_1_ES_2:
+	MOV EVENTO, #01H
+	RET
+
+
+;-------------------3----------------
+
+GEN_EV_3:
+	;CONDICIONES ESTADO 3
+	JB SENSOR_LLENADO, GEN_EV_1_ES_3
+	MOV EVENTO, #00H
+	RET
+
+GEN_EV_1_ES_3:
+	MOV EVENTO, #01H
+	RET
+
+;------------4-------------------------
+
+GEN_EV_4:
+	;CONDICIONES ESTADO 44
+
+	JB P3.0, T_SEL					; P3.1 = 0 Y P3.0 = 0 NI SIQUIERA MEDIMOS DIRECTAMENTE A
+	JB P3.1, T_SEL					; TEMPERATURA ALCANZADA
+	AJMP GEN_EV_2_ES_4
+	T_SEL:
+	JB TICK_1S, COMP_TICK_ADC
+	MOV EVENTO, #00H
+	RET
+
+COMP_TICK_ADC:
+	JB TICK_ADC, COMPROBAR_TEMP
+	MOV EVENTO, #00H
+	RET
+
+COMPROBAR_TEMP:
+	JB P3.1, COMP_T3_T2_T1
+	JB P3.0, COMP_T3_T2_T1
+	AJMP GEN_EV_2_ES_4			;SI TEMP1 - 0 Y TEMP0 - 0 ENTONCES T0 Y COMO ESTE ESTA OK
+	RET
+
+	COMP_T3_T2_T1:				;SOLO SET TEMP_SEL SI T1,T2,T3 YA QUE T0 USA AGUA TAL CUAL
+		MOV A, VALOR_ADC
+		SUBB A, TEMP_SEL 		; SUSTITUIR EL VALOR DE 00H POR TEMP MINA ALCANZAR
+		JC GEN_EV_1_ES_4
+		AJMP GEN_EV_2_ES_4
+		RET
+GEN_EV_1_ES_4:
+	CLR TICK_ADC				; NO CALIENTE
+	CLR TICK_1S
+	MOV EVENTO, #01H
+	RET
+
+GEN_EV_2_ES_4:	
+	CLR TICK_ADC				; SI CALIENTE
+	CLR TICK_1S
+	MOV EVENTO, #02H
+	RET
+;-------------5------------------
+
+GEN_EV_5:
+	;CONDICIONES ESTADO 0
+	JB TICK_50MIN, GEN_EV_3_ES_5
+	JB TICK_1MIN, GEN_EV_2_ES_5
+	JB TICK_15S, GEN_EV_1_ES_5
+	MOV EVENTO, #00H
+	RET
+
+GEN_EV_1_ES_5:	;15 SEG
+	CLR TICK_15S
+	MOV EVENTO,#01H
+	RET
+
+GEN_EV_2_ES_5:	;1MIN
+	CLR TICK_1MIN
+	MOV EVENTO,#02H
+	RET
+
+GEN_EV_3_ES_5:	;50MIN
+	CLR TICK_50MIN
+	CLR TICK_10MIN
+	CLR TICK_1MIN
+	CLR TICK_15S
+	MOV EVENTO,#03H
+	RET
+
+;----------6---------
+
+GEN_EV_6:
+	;CONDICIONES ESTADO 0
+	JB SENSOR_VACIADO, GEN_EV_1_ES_6
+	MOV EVENTO, #00H
+	RET
+
+GEN_EV_1_ES_6:
+	MOV EVENTO, #01H
+	RET
+;-------------7-----------
+GEN_EV_7:
+	;CONDICIONES ESTADO 7
+	JB TICK_10MIN, GEN_EV_1_ES_7
+	JB TICK_1MIN, GEN_EV_2_ES_7
+	MOV EVENTO, #00H
+	RET
+
+GEN_EV_1_ES_7:
+	CLR TICK_10MIN
+	MOV EVENTO, #01H
+	RET
+
+GEN_EV_2_ES_7:
+	CLR TICK_1MIN
+	MOV EVENTO, #02H
+	RET
+;----------8--------------
+GEN_EV_8:
+	;CONDICIONES ESTADO 0
+	JB PUERTA_ABIERTA, GEN_EV_1_ES_8
+	MOV EVENTO, #00H
+	RET
+
+GEN_EV_1_ES_8:
+	MOV EVENTO, #01H
+	RET
+
+;--------------
+;===============ACCIONES========
+
+ACTIVAR_ADC_PESO:			;SELECCIONAMOS EL CANAL 0 PARA PESO
+	ANL ADCON,#0xE8
+	ORL ADCON,#0x08
+	RET
+
+ACTIVAR_ADC_TEMP:
+	SETB IE.6				;SELECCIONAMOS EL CANAL 1 PARA TEMP
+	ANL ADCON, #0xE6
+	ORL ADCON, #0x09		
+	RET
+APAGAR_ADC:
+	CLR IE.6
+	ANL ADCON, #0xE0
+	RET
+
+
+ACTIVAR_TIMER_0:
+	JNB PRIMERA_VUELTA, ACTIVAR_TIMER_0_PRIMERA_VUELTA
+	AJMP ACTIVAR_TIMER_0_FULL
+	RET
+
+ACTIVAR_TIMER_0_PRIMERA_VUELTA:
+	MOV TMOD, #0x01
+	MOV TH0, #0x7B
+	MOV TL0, #0x80
+	SETB IE.7
+	SETB IE.1
+	SETB PRIMERA_VUELTA
+	SETB TR0
+	RET
+
+ACTIVAR_TIMER_0_FULL:
+	MOV TMOD, #0x01
+	MOV TH0, #0x00
+	MOV TL0, #0x00
+	SETB IE.7
+	SETB IE.1
+	SETB TR0
+	RET
+
+ACTUALIZAR_CONT_TIMER_0:
+	
+	MOV A, CONT_INTERRUPCIONES_T0
+	SUBB A, #0x1F
+	JZ PASAN_1SEG
+
+	MOV A, CONT_1S
+	SUBB A, #0x0E
+	JZ PASAN_15SEG
+	
+	MOV A, CONT_15S
+	SUBB A, #0x03
+	JZ PASAN_1MIN
+
+	MOV A, CONT_1MIN
+	SUBB A, #0x09
+	JZ PASAN_10MIN
+	
+	MOV A, CONT_10MIN
+	SUBB A, #0x04
+	JZ PASAN_50MIN
+      	
+	
+	RET						;escapar del act tiempos
+       	
+	PASAN_1SEG:
+		INC CONT_1S
+		MOV CONT_INTERRUPCIONES_T0, #00H
+		CLR PRIMERA_VUELTA 			;CUANDO SE VUELVA A ACTIVAR T0 LO HARA DE FORMA
+		SETB TICK_1S
+		AJMP ACTUALIZAR_CONT_TIMER_0
+		RET
+	PASAN_15SEG:
+		INC CONT_15S
+		MOV CONT_1S, #00H
+		SETB TICK_15S
+		AJMP ACTUALIZAR_CONT_TIMER_0
+		RET
+	PASAN_1MIN:
+		INC CONT_1MIN
+		MOV CONT_15S, #00H
+		SETB TICK_1MIN
+		AJMP ACTUALIZAR_CONT_TIMER_0
+		RET
+	PASAN_10MIN:
+		INC CONT_10MIN
+		MOV CONT_1MIN, #00H
+		SETB TICK_10MIN
+		AJMP ACTUALIZAR_CONT_TIMER_0
+		RET
+	PASAN_50MIN:
+		SETB TICK_50MIN
+		MOV CONT_10MIN, #00H
+		RET
+
+
+
+	;SI CONT_INT_TO = 31 ENTONCES tick_1s
+	;si tick_1s inc cont 1s
+	;si cont1_1s = 15 ENTONCES tick_15s
+	;si tick 15s inc cont_15s
+	;si cont_15s = 4 entonces tick_1min
+	;si tick_1min inc cont_1min
+	;si cont_1min = 10 ENTONCES tick_10min
+	;si tick_10min inc cont_10min
+	;si cont_10min = 5 ENTONCES tick_50min
+
+
+	RET
+APAGAR_TIMER:
+	RET
+
+ACTIVAR_PWM0_60RPM:
+	MOV PWM0, #0x1A
+	RET
+
+ACTIVAR_PWM0_600RPM:
+	MOV PWM0, #0xE6
+	RET
+
+APAGAR_PWM0:
+	MOV PWM0, 0x00
+	RET
+
+CARGAR_DISPLAY_1:
+	MOV A, #0x80
+	ANL P0, A		; 1000 0000 -> nos settea todo a 0 menos el .7
+	MOV A, DISPLAY_1
+	ORL P0, A		; dsp1 siempre tiene un 0 en .7 por ello no modifica p0.7
+
+	RET
+
+CARGAR_DISPLAY_0:
+	MOV A, #0x80
+	ANL P2, A		; 1000 0000 -> nos settea todo a 0 menos el .7
+	MOV A, DISPLAY_0
+	ORL P2, A		; dsp1 siempre tiene un 0 en .7 por ello no modifica p0.7
+	RET
+
+
+SET_TEMP_SELECT:
+	JB P3.1, SET_T_ALTAS
+	AJMP SET_T_BAJAS
+	RET
+	
+	SET_T_ALTAS:
+		JB P3.0, SET_T_T3
+		AJMP SET_T_T2
+		RET
+	SET_T_BAJAS:
+		JB P3.0, SET_T_T1
+		RET
+
+		SET_T_T3:
+			MOV TEMP_SEL, #0xCD
+			RET
+		SET_T_T2:
+			MOV TEMP_SEL, #0x9A
+			RET
+		SET_T_T1:
+			MOV TEMP_SEL, #0x66
+			RET
+	
+CARGAR_TEMP_DSP_0:
+	JNB BIT1_TEMP, COMPROBAR_B0T_B1_0
+	AJMP COMPROBAR_B0T_B1_1
+	RET
+
+	COMPROBAR_B0T_B1_0:
+		JB BIT0_TEMP, PINTAR_D0_T1
+		AJMP PINTAR_D0_T0
+		RET
+	COMPROBAR_B0T_B1_1:
+		JB BIT0_TEMP, PINTAR_D0_T3
+		AJMP PINTAR_D0_T2
+		RET
+	
+	PINTAR_D0_T0:
+		MOV DISPLAY_0, #0x3F	;0
+		RET
+	PINTAR_D0_T1:
+		MOV DISPLAY_0, #0x06	;1
+		RET
+	PINTAR_D0_T2:
+		MOV DISPLAY_0, #0x5B	;2
+		RET
+	PINTAR_D0_T3:
+		MOV DISPLAY_0, #0x4F	;3
+		RET
+
+MAPEAR_TIEMPO_D1_D0:			;guardamos los valores de t restante por decenas y unidades en dos dir.
+	MOV A,TIEMPO_RESTANTE_MINS
+	MOV B, #0AH
+	DIV AB				; APROVECHAMOS QUE ADCH/10 COCIENTE -> A (decenas) Y RESTO -> B (unidades)
+	MOV DECENAS, A
+	MOV UNIDADES, B
+	
+	ACALL MAP_DEC_D1
+	ACALL MAP_UNI_D0
+
+	RET
+
+	MAP_DEC_D1:
+		MOV A, DECENAS
+		RL A
+		MOV DPTR, #LISTA_DECENAS
+		JMP @A+DPTR
+	LISTA_DECENAS:
+		AJMP CD0
+		AJMP CD1
+		AJMP CD2
+		AJMP CD3
+		AJMP CD4
+		AJMP CD5
+		AJMP CD6
+		AJMP CD7
+		AJMP CD8
+		AJMP CD9
+	
+	CD0:
+		MOV DISPLAY_1, #0x3F
+		RET
+	CD1:
+		MOV DISPLAY_1, #0x06
+		RET
+	CD2:
+		MOV DISPLAY_1, #0x5B
+		RET
+	CD3:
+		MOV DISPLAY_1, #0x4F
+		RET
+	CD4:
+		MOV DISPLAY_1, #0x66
+		RET
+	CD5:
+		MOV DISPLAY_1, #0x6D
+		RET
+	CD6:
+		MOV DISPLAY_1, #0x7D
+		RET
+	CD7:
+		MOV DISPLAY_1, #0x07
+		RET
+	CD8:
+		MOV DISPLAY_1, #0x7F
+		RET
+	CD9:
+		MOV DISPLAY_1, #0x6F
+		RET
+
+	MAP_UNI_D0:
+		MOV A, UNIDADES
+		RL A
+		MOV DPTR, #LISTA_UNIDADES
+		JMP @A+DPTR
+	LISTA_UNIDADES:
+		AJMP CU0
+		AJMP CU1
+		AJMP CU2
+		AJMP CU3
+		AJMP CU4
+		AJMP CU5
+		AJMP CU6
+		AJMP CU7
+		AJMP CU8
+		AJMP CU9
+	
+	CU0:
+		MOV DISPLAY_0, #0x3F
+		RET
+	CU1:
+		MOV DISPLAY_0, #0x06
+		RET
+	CU2:
+		MOV DISPLAY_0, #0x5B
+		RET
+	CU3:
+		MOV DISPLAY_0, #0x4F
+		RET
+	CU4:
+		MOV DISPLAY_0, #0x66
+		RET
+	CU5:
+		MOV DISPLAY_0, #0x6D
+		RET
+	CU6:
+		MOV DISPLAY_0, #0x7D
+		RET
+	CU7:
+		MOV DISPLAY_0, #0x07
+		RET
+	CU8:
+		MOV DISPLAY_0, #0x7F
+		RET
+	CU9:
+		MOV DISPLAY_0, #0x6F
+		RET
+
+CAMBIAR_SENTIDO_GIRO:
+	JB SENTIDO_GIRO_MOTOR, FALSE_SG			;SI SENT 1 -> VAMOS A SET0
+	AJMP TRUE_SG					;SI SENT 0 -> SET1
+	RET
+	FALSE_SG:
+		CLR SENTIDO_GIRO_MOTOR
+		RET
+	TRUE_SG:
+		SETB SENTIDO_GIRO_MOTOR
+		RET
+;===========INTERRUPCIONES==================
+
+INT0_ISR:
+	PUSH ACC
+	PUSH PSW
+	SETB TICK_INT_0
+	CLR IE.0
+	POP PSW
+	POP ACC
+	RETI
+
+ADC_ISR:
+	PUSH ACC
+	PUSH PSW
+	SETB TICK_ADC
+	MOV VALOR_ADC, ADCH
+	ANL ADCON, #0xE1		;PARAS EL ADC
+	POP PSW
+	POP ACC
+	RETI
+
+TIMER_0_ISR:
+	PUSH ACC
+	PUSH PSW
+	INC CONT_INTERRUPCIONES_T0
+	ACALL ACTUALIZAR_CONT_TIMER_0
+	ACALL ACTIVAR_TIMER_0
+	POP PSW
+	POP ACC
+	RETI
+
+;======================FIN==================
+
+END
+\end{lstlisting}
+\end{adjustwidth}
+\end{document}
