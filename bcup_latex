@@ -207,10 +207,58 @@ A15 & Apagar el PWM 0 \\ \hline
 \end{adjustwidth}
 \subsection{Diagramas de flujo}
 \subsubsection{Secuencia Principal}
+
+\begin{figure}[H]        % H mayúscula = "aquí y no te muevas"
+  \centering
+  \includegraphics[width=6cm]{imagenes/Bucle.jpg}
+  \caption{Diagrama bucle principal.}
+\end{figure}
+\FloatBarrier   
+\newpage
 \subsubsection{Interrupciones}
+\begin{itemize}
+    \item Interrupción ADC
+    \begin{figure}[H]        % H mayúscula = "aquí y no te muevas"
+  \centering
+  \includegraphics[width=2cm]{imagenes/ADC_ISR.jpg}
+  \caption{Diagrama Interrupción ADC}
+\end{figure}
+\FloatBarrier
+\newpage
+    \item Interrupción Timer
+    \begin{figure}[H]        % H mayúscula = "aquí y no te muevas"
+  \centering
+  \includegraphics[width=9cm]{imagenes/TIMER0_ISR.jpg}
+  \caption{Diagrama Interrupción Timer 0.}
+\end{figure}
+\FloatBarrier  
+\end{itemize}
+\newpage
 \subsubsection{Maq. Eventos 'Calentando Agua'}
-
-
+    \begin{figure}[H]        % H mayúscula = "aquí y no te muevas"
+  \centering
+  \includegraphics[width=2cm]{imagenes/BUCLE_ES4.jpg}
+  \caption{Diagrama ESTADO 4.}
+\end{figure}
+\FloatBarrier  
+    \begin{figure}[H]        % H mayúscula = "aquí y no te muevas"
+  \centering
+  \includegraphics[width=5cm]{imagenes/GEN_EV_4_PRIMERA_CAPA.jpg}
+  \caption{Diagrama Generador de Eventos ESTADO 4.}
+\end{figure}
+\FloatBarrier
+    \begin{figure}[H]        % H mayúscula = "aquí y no te muevas"
+  \centering
+  \includegraphics[width=16cm]{imagenes/GEN_EV_ES4_PARTE2.jpg}
+  \caption{Diagrama lógica Generador de Eventos 4.}
+\end{figure}
+\FloatBarrier 
+    \begin{figure}[H]        % H mayúscula = "aquí y no te muevas"
+  \centering
+  \includegraphics[width=16cm]{imagenes/MAQ_4.jpg}
+  \caption{Diagrama Máquina de Eventos 4.}
+\end{figure}
+\FloatBarrier 
 \newpage
 \section{Cálculos y comentarios}
 \subsection{Cálculo Sobrepeso}
