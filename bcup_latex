@@ -116,7 +116,7 @@ En cuanto a las decisiones de diseño se ha optado siempre por minimizar dentro 
 \subsection{Diagrama de estados}
 \begin{figure}[H]        % H mayúscula = "aquí y no te muevas"
   \centering
-  \includegraphics[width=12cm]{imagenes/EstadosLavadora.jpg}
+  \includegraphics[width=12cm]{imagenes/EstadosLavadora(2).jpg}
   \caption{Diagrama de estados de la lavadora.}
 \end{figure}
 \FloatBarrier   
